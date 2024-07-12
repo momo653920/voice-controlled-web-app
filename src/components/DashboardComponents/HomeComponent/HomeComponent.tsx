@@ -1,15 +1,25 @@
+import React, { useMemo } from "react";
 import { shallowEqual, useSelector } from "react-redux";
 import ShowItems from "../ShowItems/ShowItems";
+
 const HomeComponent = () => {
   const files = [{ name: "file1" }, { name: "file2" }];
 
-  const { isLoading, userFolders } = useSelector(
+  const { isLoading } = useSelector(
     (state) => ({
       isLoading: state.filefolders.isLoading,
-      userFolders: state.filefolders.userFolders,
     }),
     shallowEqual
   );
+
+  const userFolders = useSelector(
+    (state) =>
+      state.filefolders.userFolders.filter(
+        (folder) => folder.data.parent === "root"
+      ),
+    shallowEqual
+  );
+
   return (
     <div className="col-md-12 w-100">
       {isLoading ? (
@@ -17,11 +27,11 @@ const HomeComponent = () => {
       ) : (
         <>
           <ShowItems
-            tittle={"Created Folders"}
-            type={"folder"}
+            title="Created Folders"
+            type="folder"
             items={userFolders}
           />
-          <ShowItems tittle={"Created Files"} type={"files"} items={files} />
+          <ShowItems title="Created Files" type="files" items={files} />
         </>
       )}
     </div>

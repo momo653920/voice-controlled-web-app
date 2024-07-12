@@ -8,24 +8,25 @@ const CreateFolder = ({ setIsCreateFolderModalOpen }) => {
   const [folderName, setFolderName] = useState("");
   const [error, setError] = useState("");
   const modalRef = useRef(null);
+  const dispatch = useDispatch();
 
-  const { userFolders, user, currentFolder } = useSelector(
+  const { userFolders, user, currentFolder, currentFolderData } = useSelector(
     (state) => ({
       userFolders: state.filefolders.userFolders,
       user: state.auth.user,
       currentFolder: state.filefolders.currentFolder,
+      currentFolderData: state.filefolders.userFolders.find(
+        (folder) => folder.docId === state.filefolders.currentFolder
+      ),
     }),
     shallowEqual
   );
 
   const checkFolderAlreadyPresent = (name) => {
-    const folderPresent = userFolders.find((folder) => folder.name === name);
-    if (folderPresent) {
-      return true;
-    }
-    return false;
+    return userFolders
+      .filter((folder) => folder.data.parent === currentFolder)
+      .some((folder) => folder.data.name === name);
   };
-  const dispatch = useDispatch();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -35,17 +36,37 @@ const CreateFolder = ({ setIsCreateFolderModalOpen }) => {
         return;
       }
 
+      // Ensure currentFolderData is defined
+      if (!currentFolderData) {
+        setError("Current folder data is undefined");
+        return;
+      }
+
       const data = {
         createdAt: new Date(),
         name: folderName,
         userId: user.uid,
         createdBy: user.displayName,
-        path: currentFolder === "root" ? [] : ["parent folder path"],
-        parent: currentFolder,
+        path:
+          currentFolder === "root"
+            ? []
+            : [...currentFolderData.data.path, currentFolder],
+        parent: currentFolder, // Assign parent field here
         lastAccessed: null,
         updatedAt: new Date(),
       };
-      dispatch(createFolder(data));
+
+      // Ensure all fields are defined and log each field
+      const cleanData = {};
+      Object.keys(data).forEach((key) => {
+        const value = data[key];
+        if (value === undefined) {
+          console.warn(`Field ${key} is undefined`);
+        }
+        cleanData[key] = value !== undefined ? value : null;
+      });
+
+      dispatch(createFolder(cleanData));
       setIsCreateFolderModalOpen(false);
     } else {
       setError("Folder name cannot be empty");

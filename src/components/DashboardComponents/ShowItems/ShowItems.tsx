@@ -22,8 +22,8 @@ const ShowItems = ({ title, items, type }) => {
       <h4 className="text-center border-bottom py-2">{title}</h4>
       <div className="row gap-2 p-4 flex-wrap">
         {items.map((item, index) => (
-          <p
-            key={index * 55}
+          <div
+            key={index}
             className="col-md-2 py-3 text-center d-flex flex-column border"
             onDoubleClick={() => handleDoubleClick(item.docId)}
           >
@@ -32,14 +32,12 @@ const ShowItems = ({ title, items, type }) => {
             ) : (
               <FontAwesomeIcon icon={faFileAlt} size="4x" className="mb-3" />
             )}
-            {item.data && item.data.name ? (
-              <span>{item.data.name}</span>
-            ) : (
-              <span>Unnamed Item</span> // Placeholder for unnamed items
-            )}
-          </p>
+            <span>{item.data?.name || "Unnamed Item"}</span>
+          </div>
         ))}
       </div>
     </div>
   );
 };
+
+export default ShowItems;
