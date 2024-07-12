@@ -2,11 +2,15 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFolder, faFileAlt } from "@fortawesome/free-solid-svg-icons";
 import "./ShowItems.css";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { changeFolder } from "../../../redux/actionCreators/fileFoldersActionCreator";
 
 const ShowItems = ({ title, items, type }) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const handleDoubleClick = (itemId) => {
     if (type === "folder") {
+      dispatch(changeFolder(itemId));
       navigate(`/dashboard/folder/${itemId}`);
     } else {
       alert("File clicked");
@@ -39,5 +43,3 @@ const ShowItems = ({ title, items, type }) => {
     </div>
   );
 };
-
-export default ShowItems;

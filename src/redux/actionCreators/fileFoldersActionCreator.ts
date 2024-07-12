@@ -21,6 +21,11 @@ const setLoading = (payload) => ({
   payload,
 });
 
+const setChangeFolder = (payload) => ({
+  type: types.CHANGE_FOLDER,
+  payload,
+});
+
 export const createFolder = (data) => (dispatch) => {
   fire
     .firestore()
@@ -49,4 +54,8 @@ export const getFolders = (userId) => (dispatch) => {
       dispatch(addFolders(folderData));
       dispatch(setLoading(false));
     });
+};
+
+export const changeFolder = (folderId) => (dispatch) => {
+  dispatch(setChangeFolder(folderId));
 };
