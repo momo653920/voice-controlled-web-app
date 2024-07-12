@@ -1,0 +1,92 @@
+/* SubBar.css */
+
+/* Breadcrumb Styles */
+.navbar {
+    background-color: #ffffff;
+    border: 1px solid #e3e3e3;
+    padding: 10px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .breadcrumb-item {
+    margin-right: 5px;
+    font-size: 14px;
+  }
+  
+  .breadcrumb-item:last-child {
+    font-weight: bold;
+  }
+  
+  .breadcrumb-item.active {
+    color: #000000;
+    font-weight: bold;
+  }
+  
+  /* Navbar Styles */
+  .navbar-nav {
+    display: flex;
+    align-items: center;
+    list-style: none;
+  }
+  
+  .navbar-item {
+    margin: 0 5px;
+  }
+  
+  .btn-lg {
+    font-size: 16px;
+    padding: 10px 20px;
+  }
+  
+  .btn-outline-dark {
+    color: #343a40;
+    border-color: #343a40;
+  }
+  
+  .btn-outline-dark:hover {
+    background-color: #343a40;
+    color: #ffffff;
+  }
+  
+  /* Responsive Styles */
+  @media (max-width: 768px) {
+    .ms-5,
+    .me-5 {
+      display: none;
+    }
+  }
+  
+  @media (max-width: 576px) {
+    .navbar-nav {
+      flex-direction: column;
+    }
+  
+    .navbar-item {
+      margin: 5px 0;
+    }
+  }
+  /* SubBar.css */
+
+/* Breadcrumb items */
+.breadcrumb-item {
+  margin-right: 5px;
+  color: #6c757d; /* Default text color */
+  cursor: pointer; /* Change cursor on hover */
+}
+
+.breadcrumb-item:hover {
+  color: #495057; /* Darker text color on hover */
+  text-decoration: underline; /* Underline on hover */
+}
+
+/* Folders */
+.breadcrumb-item.folder {
+  color: #6c757d; /* Default text color for folders */
+  cursor: pointer; /* Change cursor on hover */
+}
+
+.breadcrumb-item.folder:hover {
+  color: #495057; /* Darker text color on hover for folders */
+}

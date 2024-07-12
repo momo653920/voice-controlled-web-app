@@ -1,50 +1,107 @@
 import React from "react";
-import { useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
-import createCachedSelector from "re-reselect";
-import ShowItems from "../ShowItems/ShowItems";
+import "./SubBar.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faFileAlt,
+  faFileArrowUp,
+  faFolderPlus,
+} from "@fortawesome/free-solid-svg-icons";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { changeFolder } from "../../../redux/actionCreators/fileFoldersActionCreator";
 
-const selectUserFolders = (state) => state.filefolders.userFolders;
-
-const selectFolderData = createCachedSelector(
-  [selectUserFolders, (_, folderId) => folderId],
-  (userFolders, folderId) => {
-    const currentFolder = userFolders.find(
-      (folder) => folder.docId === folderId
-    );
-
-    return {
-      currentFolderData: currentFolder ? currentFolder.data : null,
-      childFolders: userFolders.filter(
-        (folder) => folder.data.parent === folderId
+const SubBar = ({ setIsCreateFolderModalOpen }) => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { currentFolder, userFolders, currentFolderData } = useSelector(
+    (state) => ({
+      currentFolder: state.filefolders.currentFolder,
+      currentFolderData: state.filefolders.userFolders.find(
+        (folder) => folder.docId === state.filefolders.currentFolder
       ),
-    };
-  }
-)(
-  // Provide a cache key function
-  (_, folderId) => folderId
-);
-
-const FolderComponent = () => {
-  const { folderId } = useParams();
-
-  const { currentFolderData, childFolders } = useSelector((state) =>
-    selectFolderData(state, folderId)
+      userFolders: state.filefolders.userFolders,
+    }),
+    // Shallow equality check for performance optimization
+    (prev, next) =>
+      prev.currentFolder === next.currentFolder &&
+      prev.currentFolderData === next.currentFolderData &&
+      prev.userFolders === next.userFolders
   );
 
-  if (!currentFolderData) {
-    return <div>Folder not found</div>;
-  }
+  const handleNavigate = (link, id) => {
+    navigate(link);
+    dispatch(changeFolder(id));
+  };
+
+  const renderBreadcrumb = () => {
+    if (currentFolder === "root") {
+      return <li className="breadcrumb-item active">Home</li>;
+    } else {
+      const path = currentFolderData?.data.path || [];
+      return (
+        <>
+          <button
+            onClick={() => handleNavigate("/dashboard", "root")}
+            className="breadcrumb-item text-decoration-none"
+          >
+            Home
+          </button>
+          {path.map((folderId, index) => (
+            <button
+              key={index}
+              className="breadcrumb-item folder text-decoration-none"
+              onClick={() =>
+                handleNavigate(
+                  `/dashboard/folder/${userFolders.find((fldr) => folderId === fldr.docId).docId}`,
+                  folderId
+                )
+              }
+            >
+              {userFolders.find((fldr) => folderId === fldr.docId)?.data.name}
+            </button>
+          ))}
+          <li className="breadcrumb-item active">
+            {" "}
+            {currentFolderData?.data.name}
+          </li>
+        </>
+      );
+    }
+  };
 
   return (
-    <div>
-      {childFolders.length > 0 ? (
-        <ShowItems title="Child Folders" type="folder" items={childFolders} />
-      ) : (
-        <p className="text-center my-5">Empty Folder</p>
-      )}
-    </div>
+    <nav className="navbar navbar-expand-lg mt-3 navbar-light bg-white py-2">
+      <nav className="ms-5" aria-label="breadcrumb">
+        <ol className="breadcrumb d-flex align-items-center">
+          {renderBreadcrumb()}
+        </ol>
+      </nav>
+
+      <ul className="navbar-nav ms-auto me-5">
+        <li className="navbar-item mx-2">
+          <button className="btn btn-outline-dark btn-lg navbar-button">
+            <FontAwesomeIcon icon={faFileArrowUp} />
+            &nbsp; Upload File
+          </button>
+        </li>
+        <li className="navbar-item mx-2">
+          <button className="btn btn-outline-dark btn-lg navbar-button">
+            <FontAwesomeIcon icon={faFileAlt} />
+            &nbsp; Create File
+          </button>
+        </li>
+        <li className="navbar-item ms-2">
+          <button
+            className="btn btn-outline-dark btn-lg navbar-button"
+            onClick={() => setIsCreateFolderModalOpen(true)}
+          >
+            <FontAwesomeIcon icon={faFolderPlus} />
+            &nbsp; Create Folder
+          </button>
+        </li>
+      </ul>
+    </nav>
   );
 };
 
-export default FolderComponent;
+export default SubBar;

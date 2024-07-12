@@ -1,43 +1,45 @@
-import React, { useMemo } from "react";
-import { shallowEqual, useSelector } from "react-redux";
+import React from "react";
+import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
+import { createCachedSelector } from "re-reselect"; // Updated import
 import ShowItems from "../ShowItems/ShowItems";
 
-const FolderComponent = () => {
-  const { folderId } = useParams();
+const selectUserFolders = (state) => state.filefolders.userFolders;
 
-  const { currentFolderData, childFolders } = useSelector((state) => {
-    const currentFolder = state.filefolders.userFolders.find(
+const selectFolderData = createCachedSelector(
+  [selectUserFolders, (_, folderId) => folderId],
+  (userFolders, folderId) => {
+    const currentFolder = userFolders.find(
       (folder) => folder.docId === folderId
     );
 
     return {
       currentFolderData: currentFolder ? currentFolder.data : null,
-      childFolders: state.filefolders.userFolders.filter(
+      childFolders: userFolders.filter(
         (folder) => folder.data.parent === folderId
       ),
     };
-  }, shallowEqual);
+  }
+)(
+  // Provide a cache key function
+  (_, folderId) => folderId
+);
 
-  // Memoize currentFolderData and childFolders
-  const memoizedCurrentFolderData = useMemo(
-    () => currentFolderData,
-    [currentFolderData]
+const FolderComponent = () => {
+  const { folderId } = useParams();
+
+  const { currentFolderData, childFolders } = useSelector((state) =>
+    selectFolderData(state, folderId)
   );
-  const memoizedChildFolders = useMemo(() => childFolders, [childFolders]);
 
-  if (!memoizedCurrentFolderData) {
+  if (!currentFolderData) {
     return <div>Folder not found</div>;
   }
 
   return (
     <div>
-      {memoizedChildFolders.length > 0 ? (
-        <ShowItems
-          title="Child Folders"
-          type="folder"
-          items={memoizedChildFolders}
-        />
+      {childFolders.length > 0 ? (
+        <ShowItems title="Child Folders" type="folder" items={childFolders} />
       ) : (
         <p className="text-center my-5">Empty Folder</p>
       )}

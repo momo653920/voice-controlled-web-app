@@ -5,11 +5,11 @@ import { HomePage, Register, Login, DashboardPage } from "./pages";
 import { checkIsLoggedIn } from "./redux/actionCreators/authActionCreator";
 import "./App.css";
 
-const App = () => {
+const App: React.FC = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(checkIsLoggedIn());
+    dispatch(checkIsLoggedIn()); // Dispatch action to check if user is logged in
   }, [dispatch]);
 
   return (
