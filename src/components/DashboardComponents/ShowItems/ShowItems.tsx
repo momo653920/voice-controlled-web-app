@@ -1,17 +1,40 @@
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faFolder, faFileAlt } from "@fortawesome/free-solid-svg-icons";
 import "./ShowItems.css";
+import { useNavigate } from "react-router-dom";
 
-const ShowItems = ({ tittle, items }) => {
+const ShowItems = ({ title, items, type }) => {
+  const navigate = useNavigate();
+  const handleDoubleClick = (itemId) => {
+    if (type === "folder") {
+      navigate(`/dashboard/folder/${itemId}`);
+    } else {
+      alert("File clicked");
+    }
+  };
+
   return (
     <div className="w-100">
-      <h4 className="text-center border-bottom py-2">{tittle}</h4>
+      <h4 className="text-center border-bottom py-2">{title}</h4>
       <div className="row gap-2 p-4 flex-wrap">
-        {items.map((item, index) => {
-          return (
-            <p key={index * 55} className="col-md-2 p-2 text-centre border">
-              {item}
-            </p>
-          );
-        })}
+        {items.map((item, index) => (
+          <p
+            key={index * 55}
+            className="col-md-2 py-3 text-center d-flex flex-column border"
+            onDoubleClick={() => handleDoubleClick(item.docId)}
+          >
+            {type === "folder" ? (
+              <FontAwesomeIcon icon={faFolder} size="4x" className="mb-3" />
+            ) : (
+              <FontAwesomeIcon icon={faFileAlt} size="4x" className="mb-3" />
+            )}
+            {item.data && item.data.name ? (
+              <span>{item.data.name}</span>
+            ) : (
+              <span>Unnamed Item</span> // Placeholder for unnamed items
+            )}
+          </p>
+        ))}
       </div>
     </div>
   );

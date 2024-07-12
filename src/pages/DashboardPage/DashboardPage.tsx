@@ -1,23 +1,66 @@
-import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { shallowEqual, useDispatch, useSelector } from "react-redux";
+import { Route, Routes, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { createSelector } from "reselect";
 import Navbar from "../../components/DashboardComponents/NavBar/Navbar";
 import SubBar from "../../components/DashboardComponents/SubBar/SubBar";
 import HomeComponent from "../../components/DashboardComponents/HomeComponent/HomeComponent";
 import CreateFolder from "../../components/DashboardComponents/CreateFolder/CreateFolder";
+import { getFolders } from "../../redux/actionCreators/fileFoldersActionCreator";
+import FolderComponent from "../../components/DashboardComponents/FolderComponent/FolderComponent";
+
+// Define the state and user types
+interface AuthState {
+  isAuthenticated: boolean;
+  user: {
+    uid: string;
+  } | null;
+}
+
+interface FileFoldersState {
+  isLoading: boolean;
+}
+
+interface RootState {
+  auth: AuthState;
+  filefolders: FileFoldersState;
+}
+
+// Create selectors
+const selectAuthState = (state: RootState) => state.auth;
+const selectFileFoldersState = (state: RootState) => state.filefolders;
+
+const selectIsLoggedIn = createSelector(
+  selectAuthState,
+  (auth) => auth.isAuthenticated
+);
+const selectUser = createSelector(selectAuthState, (auth) => auth.user);
+const selectIsLoading = createSelector(
+  selectFileFoldersState,
+  (filefolders) => filefolders.isLoading
+);
 
 const DashboardPage = () => {
   const [isCreateFolderModalOpen, setIsCreateFolderModalOpen] = useState(false);
 
-  const isLoggedIn = useSelector((state: any) => state.auth.isAuthenticated);
+  const isLoggedIn = useSelector(selectIsLoggedIn, shallowEqual);
+  const user = useSelector(selectUser, shallowEqual);
+  const isLoading = useSelector(selectIsLoading, shallowEqual);
+
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (!isLoggedIn) {
-      console.log(isLoggedIn);
       navigate("/");
     }
   }, [isLoggedIn, navigate]);
+
+  useEffect(() => {
+    if (user && isLoading) {
+      dispatch(getFolders(user.uid));
+    }
+  }, [user, dispatch, isLoading]);
 
   return (
     <>
@@ -26,7 +69,10 @@ const DashboardPage = () => {
       )}
       <Navbar />
       <SubBar setIsCreateFolderModalOpen={setIsCreateFolderModalOpen} />
-      <HomeComponent />
+      <Routes>
+        <Route path="" element={<HomeComponent />} />
+        <Route path="folder/:folderId" element={<FolderComponent />} />
+      </Routes>
     </>
   );
 };
