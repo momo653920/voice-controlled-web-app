@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { changeFolder } from "../../../redux/actionCreators/fileFoldersActionCreator";
 
-const SubBar = ({ setIsCreateFolderModalOpen }) => {
+const SubBar = ({ setIsCreateFolderModalOpen,setIsCreateFileModalOpen }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { currentFolder, userFolders, currentFolderData } = useSelector(
@@ -85,7 +85,8 @@ const SubBar = ({ setIsCreateFolderModalOpen }) => {
           </button>
         </li>
         <li className="navbar-item mx-2">
-          <button className="btn btn-outline-dark btn-lg navbar-button">
+          <button className="btn btn-outline-dark btn-lg navbar-button"
+           onClick={() => setIsCreateFileModalOpen(true)}>
             <FontAwesomeIcon icon={faFileAlt} />
             &nbsp; Create File
           </button>
