@@ -1,97 +1,104 @@
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useState, useRef, useEffect, useMemo } from "react";
-import { useSelector, shallowEqual, useDispatch } from "react-redux";
+import { useState } from "react";
+import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { createFolder } from "../../../redux/actionCreators/fileFoldersActionCreator";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const CreateFolder = ({ setIsCreateFolderModalOpen }) => {
   const [folderName, setFolderName] = useState("");
   const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(false); // New state for loading
-  const modalRef = useRef(null);
-  const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState(false); // State to manage loading state
 
   const { userFolders, user, currentFolder } = useSelector(
-    (state) => ({ 
-      userFolders: state.filefolders.userFolders || [],
+    (state) => ({
+      userFolders: state.filefolders.userFolders,
       user: state.auth.user,
       currentFolder: state.filefolders.currentFolder,
     }),
     shallowEqual
   );
 
-  const currentFolderData = useMemo(() => currentFolder === 'root'
-    ? { data: { path: [] } } // Set a default path for root
-    : userFolders.find(folder => folder.docId === currentFolder), [currentFolder, userFolders]);
+  const dispatch = useDispatch();
 
   const checkFolderAlreadyPresent = (name) => {
-    return userFolders.some((folder) => 
-      folder.data.parent === currentFolder && folder.data.name === name
-    );
+    const folderPresent = userFolders
+      .filter((folder) => folder.data.parent === currentFolder)
+      .find((fldr) => fldr.data.name === name);
+    return folderPresent ? true : false;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!folderName.trim()) {
+    if (folderName.trim().length === 0) {
       setError("Folder name cannot be empty");
       return;
     }
-
+    if (folderName.trim().length < 4) {
+      setError("Folder name should be at least 4 characters long");
+      return;
+    }
     if (checkFolderAlreadyPresent(folderName)) {
       setError("Folder already exists");
       return;
     }
 
-    let path = currentFolderData.data.path ? [...currentFolderData.data.path, currentFolder] : [currentFolder];
+    setIsLoading(true); // Start loading state
 
     const data = {
       createdAt: new Date(),
       name: folderName,
       userId: user.uid,
       createdBy: user.displayName,
-      path: path,
+      path:
+        currentFolder === "root"
+          ? []
+          : [...(currentFolder?.data?.path || []), currentFolder],
       parent: currentFolder,
       lastAccessed: null,
       updatedAt: new Date(),
     };
 
-    setIsLoading(true); // Set loading to true before dispatching action
     try {
+      // Dispatch action to create folder
       await dispatch(createFolder(data));
-      setIsCreateFolderModalOpen(false);
+      setIsCreateFolderModalOpen(false); // Close modal on success
     } catch (error) {
-      setError("Failed to create folder. Please try again later.");
       console.error("Error creating folder:", error);
+      setError("Failed to create folder. Please try again.");
     } finally {
-      setIsLoading(false); // Set loading to false after action is complete
+      setIsLoading(false); // Reset loading state
     }
   };
-
-  const handleClickOutside = (e) => {
-    if (modalRef.current && !modalRef.current.contains(e.target)) {
-      setIsCreateFolderModalOpen(false);
-    }
-  };
-
-  useEffect(() => {
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
 
   return (
-    <div className="position-fixed top-0 left-0 w-100 h-100 d-flex justify-content-center align-items-center" style={{ background: "rgba(0,0,0,0.4)", zIndex: 9999 }}>
-      <div ref={modalRef} className="bg-white p-4 rounded shadow" style={{ maxWidth: "600px", width: "100%", maxHeight: "80vh", overflowY: "auto" }}>
+    <div
+      className="position-fixed top-0 left-0 w-100 h-100 d-flex justify-content-center align-items-center"
+      style={{ background: "rgba(0,0,0,0.4)", zIndex: 9999 }}
+    >
+      <div
+        className="bg-white p-4 rounded shadow"
+        style={{
+          maxWidth: "600px",
+          width: "100%",
+          maxHeight: "80vh",
+          overflowY: "auto",
+        }}
+      >
         <div className="d-flex justify-content-between align-items-center mb-3">
           <h4 className="m-0">Create Folder</h4>
-          <button className="btn" onClick={() => setIsCreateFolderModalOpen(false)}>
+          <button
+            className="btn"
+            onClick={() => setIsCreateFolderModalOpen(false)}
+            disabled={isLoading} // Disable button while loading
+          >
             <FontAwesomeIcon icon={faTimes} className="text-black" />
           </button>
         </div>
         <hr />
         <form onSubmit={handleSubmit}>
-          {error && <div className="error-message alert alert-danger">{error}</div>}
+          {error && (
+            <div className="error-message alert alert-danger">{error}</div>
+          )}
           <div className="form-group">
             <input
               type="text"
@@ -103,10 +110,14 @@ const CreateFolder = ({ setIsCreateFolderModalOpen }) => {
                 setFolderName(e.target.value);
                 setError("");
               }}
-              disabled={isLoading} // Disable input when loading
+              disabled={isLoading} // Disable input while loading
             />
           </div>
-          <button type="submit" className="btn btn-primary mt-3 w-100" disabled={isLoading}>
+          <button
+            type="submit"
+            className="btn btn-primary mt-3 w-100"
+            disabled={isLoading} // Disable button while loading
+          >
             {isLoading ? "Creating..." : "Create Folder"}
           </button>
         </form>

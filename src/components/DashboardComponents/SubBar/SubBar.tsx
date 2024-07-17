@@ -1,4 +1,3 @@
-import React from "react";
 import "./SubBar.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -7,13 +6,13 @@ import {
   faFolderPlus,
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { changeFolder } from "../../../redux/actionCreators/fileFoldersActionCreator";
 
-const SubBar = ({ setIsCreateFolderModalOpen,setIsCreateFileModalOpen }) => {
+const SubBar = ({ setIsCreateFolderModalOpen, setIsCreateFileModalOpen }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { currentFolder, userFolders, currentFolderData } = useSelector(
+  const { currentFolder, currentFolderData, userFolders } = useSelector(
     (state) => ({
       currentFolder: state.filefolders.currentFolder,
       currentFolderData: state.filefolders.userFolders.find(
@@ -21,59 +20,50 @@ const SubBar = ({ setIsCreateFolderModalOpen,setIsCreateFileModalOpen }) => {
       ),
       userFolders: state.filefolders.userFolders,
     }),
-    // Shallow equality check for performance optimization
-    (prev, next) =>
-      prev.currentFolder === next.currentFolder &&
-      prev.currentFolderData === next.currentFolderData &&
-      prev.userFolders === next.userFolders
+    shallowEqual
   );
 
   const handleNavigate = (link, id) => {
     navigate(link);
     dispatch(changeFolder(id));
   };
-
-  const renderBreadcrumb = () => {
-    if (currentFolder === "root") {
-      return <li className="breadcrumb-item active">Home</li>;
-    } else {
-      const path = currentFolderData?.data.path || [];
-      return (
-        <>
-          <button
-            onClick={() => handleNavigate("/dashboard", "root")}
-            className="breadcrumb-item text-decoration-none"
-          >
-            Home
-          </button>
-          {path.map((folderId, index) => (
-            <button
-              key={index}
-              className="breadcrumb-item folder text-decoration-none"
-              onClick={() =>
-                handleNavigate(
-                  `/dashboard/folder/${userFolders.find((fldr) => folderId === fldr.docId).docId}`,
-                  folderId
-                )
-              }
-            >
-              {userFolders.find((fldr) => folderId === fldr.docId)?.data.name}
-            </button>
-          ))}
-          <li className="breadcrumb-item active">
-            {" "}
-            {currentFolderData?.data.name}
-          </li>
-        </>
-      );
-    }
-  };
-
   return (
     <nav className="navbar navbar-expand-lg mt-3 navbar-light bg-white py-2">
       <nav className="ms-5" aria-label="breadcrumb">
         <ol className="breadcrumb d-flex align-items-center">
-          {renderBreadcrumb()}
+          {currentFolder !== "root" ? (
+            <>
+              <button
+                onClick={() => handleNavigate("/dashboard", "root")}
+                className="breadcrumb-item btn btn-link"
+              >
+                Home
+              </button>
+              {currentFolderData?.data.path.map((folder, index) => {
+                <button
+                  key={index}
+                  className="breadcrumb-item btn btn-link"
+                  onClick={() =>
+                    handleNavigate(
+                      "/dashboard/folder/${userFolders.find((fldr)=>folder ===fldr.docId).docId}",
+                      userFolders.find((fldr) => folder === fldr.docId).docId
+                    )
+                  }
+                >
+                  {userFolders.find((fldr) => folder === fldr.docId)?.data.name}
+                </button>;
+              })}
+              <li className="breadcrumb-item active">
+                {currentFolderData?.data.name}
+              </li>
+            </>
+          ) : (
+            <>
+              <li className="breadcrumb-item active" aria-current="page">
+                Home
+              </li>
+            </>
+          )}
         </ol>
       </nav>
 
@@ -85,8 +75,10 @@ const SubBar = ({ setIsCreateFolderModalOpen,setIsCreateFileModalOpen }) => {
           </button>
         </li>
         <li className="navbar-item mx-2">
-          <button className="btn btn-outline-dark btn-lg navbar-button"
-           onClick={() => setIsCreateFileModalOpen(true)}>
+          <button
+            className="btn btn-outline-dark btn-lg navbar-button"
+            onClick={() => setIsCreateFileModalOpen(true)}
+          >
             <FontAwesomeIcon icon={faFileAlt} />
             &nbsp; Create File
           </button>

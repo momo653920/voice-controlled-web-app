@@ -1,110 +1,28 @@
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useState, useRef, useEffect, useMemo } from "react";
-import { useSelector, shallowEqual, useDispatch } from "react-redux";
+import { useEffect, useState } from "react";
+import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { createFile } from "../../../redux/actionCreators/fileFoldersActionCreator";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const CreateFile = ({ setIsCreateFileModalOpen }) => {
-  let [fileName, setFileName] = useState("");
+  const [fileName, setFileName] = useState("");
   const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(false); // New state for loading
+  const [isLoading, setIsLoading] = useState(false); // State to manage loading state
   const [success, setSuccess] = useState(false);
-  const modalRef = useRef(null);
-  const dispatch = useDispatch();
 
-  const { userFiles, user, currentFolder } = useSelector(
+  const { userFiles, user, currentFolder, currentFolderData } = useSelector(
     (state) => ({
-      userFiles: state.filefolders.userFiles || [],
+      userFiles: state.filefolders.userFiles,
       user: state.auth.user,
       currentFolder: state.filefolders.currentFolder,
+      currentFolderData: state.filefolders.userFolders.find(
+        (folder) => folder.docId === state.filefolders.currentFolder
+      ),
     }),
     shallowEqual
   );
 
-  const currentFolderData = useMemo(() => {
-    if (currentFolder === 'root') {
-      return { data: { path: [] } };
-    }
-    const folder = userFiles.find(file => file.docId === currentFolder);
-    return folder ? folder : { data: { path: [] } };
-  }, [currentFolder, userFiles]);
-
-  const checkFileAlreadyPresent = (name, extension) => {
-    const baseName = name.split(".").slice(0, -1).join(".");
-    return userFiles.some((file) => 
-      file.data.parent === currentFolder && file.data.name === name && file.data.extension === extension
-    );
-  };
-  
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!fileName.trim()) {
-      setError("File name cannot be empty");
-      return;
-    }
-  
-    let extension = "";
-    const lastDotIndex = fileName.lastIndexOf(".");
-    if (lastDotIndex !== -1) {
-      extension = fileName.slice(lastDotIndex + 1);
-      if (!extension) {
-        setError("Invalid file name. Please provide a valid file name with extension.");
-        return;
-      }
-    } else {
-      // Default extension if none provided
-      fileName = fileName + ".txt";
-      extension = "txt";
-    }
-  
-    if (checkFileAlreadyPresent(fileName, extension)) {
-      setError("File already exists with the same name and extension.");
-      return;
-    }
-  
-    const path = currentFolderData.data.path ? [...currentFolderData.data.path, currentFolder] : [currentFolder];
-  
-    const data = {
-      createdAt: new Date(),
-      name: fileName,
-      userId: user.uid,
-      createdBy: user.displayName,
-      path: path,
-      parent: currentFolder,
-      lastAccessed: null,
-      updatedAt: new Date(),
-      extension: extension,
-      data: "",
-      url: null,
-    };
-  
-    setIsLoading(true); // Set loading to true before dispatching action
-    try {
-      await dispatch(createFile(data, setSuccess));
-    } catch (error) {
-      setError("Failed to create file. Please try again later.");
-      console.error("Error creating file:", error);
-    } finally {
-      setIsLoading(false); // Set loading to false after action is complete
-    }
-  };
-  
-  
-  
-  
-
-  const handleClickOutside = (e) => {
-    if (modalRef.current && !modalRef.current.contains(e.target)) {
-      setIsCreateFileModalOpen(false);
-    }
-  };
-
-  useEffect(() => {
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (success) {
@@ -114,24 +32,96 @@ const CreateFile = ({ setIsCreateFileModalOpen }) => {
     }
   }, [success]);
 
-  useEffect(() => {
-    console.log("currentFolder:", currentFolder);
-    console.log("userFiles:", userFiles);
-    console.log("currentFolderData:", currentFolderData);
-  }, [currentFolder, userFiles, currentFolderData]);
+  const checkFileAlreadyPresent = (name, extension) => {
+    if (!extension) {
+      name = name + ".txt";
+    }
+    const filePresent = userFiles
+      .filter((file) => file.data.parent === currentFolder)
+      .find((fldr) => fldr.data.name === name);
+    return filePresent ? true : false;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (fileName.trim().length === 0) {
+      setError("File name cannot be empty");
+      return;
+    }
+    if (fileName.trim().length < 4) {
+      setError("File name should be at least 4 characters long");
+      return;
+    }
+    let extension = false;
+    if (fileName.split(".").length > 1) {
+      extension = true;
+    }
+    if (checkFileAlreadyPresent(fileName, extension)) {
+      setError("File already exists");
+      return;
+    }
+
+    setIsLoading(true); // Start loading state
+
+    const data = {
+      createdAt: new Date(),
+      name: extension ? fileName : fileName + ".txt",
+      userId: user.uid,
+      createdBy: user.displayName,
+      path:
+        currentFolder === "root"
+          ? []
+          : [...(currentFolder?.data?.path || []), currentFolder],
+      parent: currentFolder,
+      lastAccessed: null,
+      updatedAt: new Date(),
+      extension: extension ? fileName.split(".")[1] : "txt",
+      data: "",
+      url: "null",
+    };
+
+    try {
+      // Dispatch action to create folder
+      await dispatch(createFile(data, setSuccess));
+      console.log("data", data);
+      setIsCreateFileModalOpen(false); // Close modal on success
+    } catch (error) {
+      console.error("Error creating folder:", error);
+      setError("Failed to create folder. Please try again.");
+    } finally {
+      setIsLoading(false); // Reset loading state
+    }
+  };
 
   return (
-    <div className="position-fixed top-0 left-0 w-100 h-100 d-flex justify-content-center align-items-center" style={{ background: "rgba(0,0,0,0.4)", zIndex: 9999 }}>
-      <div ref={modalRef} className="bg-white p-4 rounded shadow" style={{ maxWidth: "600px", width: "100%", maxHeight: "80vh", overflowY: "auto" }}>
+    <div
+      className="position-fixed top-0 left-0 w-100 h-100 d-flex justify-content-center align-items-center"
+      style={{ background: "rgba(0,0,0,0.4)", zIndex: 9999 }}
+    >
+      <div
+        className="bg-white p-4 rounded shadow"
+        style={{
+          maxWidth: "600px",
+          width: "100%",
+          maxHeight: "80vh",
+          overflowY: "auto",
+        }}
+      >
         <div className="d-flex justify-content-between align-items-center mb-3">
           <h4 className="m-0">Create File</h4>
-          <button className="btn" onClick={() => setIsCreateFileModalOpen(false)}>
+          <button
+            className="btn"
+            onClick={() => setIsCreateFileModalOpen(false)}
+            disabled={isLoading} // Disable button while loading
+          >
             <FontAwesomeIcon icon={faTimes} className="text-black" />
           </button>
         </div>
         <hr />
         <form onSubmit={handleSubmit}>
-          {error && <div className="error-message alert alert-danger">{error}</div>}
+          {error && (
+            <div className="error-message alert alert-danger">{error}</div>
+          )}
           <div className="form-group">
             <input
               type="text"
@@ -143,10 +133,14 @@ const CreateFile = ({ setIsCreateFileModalOpen }) => {
                 setFileName(e.target.value);
                 setError("");
               }}
-              disabled={isLoading} // Disable input when loading
+              disabled={isLoading} // Disable input while loading
             />
           </div>
-          <button type="submit" className="btn btn-primary mt-3 w-100" disabled={isLoading}>
+          <button
+            type="submit"
+            className="btn btn-primary mt-3 w-100"
+            disabled={isLoading} // Disable button while loading
+          >
             {isLoading ? "Creating..." : "Create File"}
           </button>
         </form>

@@ -2,83 +2,26 @@ import * as types from "../actionTypes/fileFoldersActionTypes";
 import fire from "../../config/firebase";
 
 // Action creators for folders
-const addFolder = (folderData, meta) => ({
+const addFolder = (payload) => ({
   type: types.CREATE_FOLDER,
-  payload: { data: folderData, meta: meta },
+  payload,
 });
 
-const addFolders = (folders) => ({
+const addFolders = (payload) => ({
   type: types.ADD_FOLDERS,
-  payload: folders,
+  payload,
 });
 
-const setLoading = (isLoading) => ({
+const setLoading = (payload) => ({
   type: types.SET_LOADING,
-  payload: isLoading,
+  payload,
 });
 
-export const setChangeFolder = (folderId) => ({
+const setChangeFolder = (payload) => ({
   type: types.CHANGE_FOLDER,
-  payload: folderId,
+  payload,
 });
 
-
-export const createFolder = (data) => async (dispatch, getState) => {
-  try {
-    // Validate required fields
-    if (!data.createdAt || !data.name || !data.userId || !data.createdBy || !data.updatedAt) {
-      throw new Error('Invalid folder data. Missing required fields.');
-    }
-
-    // Check if parent folder ID is valid
-    if (data.parent !== 'root') { // Assuming 'root' represents the top-level folder
-      const parentFolder = getState().filefolders.userFolders.find(folder => folder.docId === data.parent);
-      if (!parentFolder) {
-        throw new Error('Parent folder not found.'); // Handle this error scenario
-      }
-    }
-
-    // Add folder to Firestore
-    const folderRef = await fire.firestore().collection('folders').add(data);
-    const folderId = folderRef.id;
-    const folderData = (await folderRef.get()).data();
-
-    // Dispatch action to update Redux state
-    dispatch(addFolder(folderData, { docId: folderId }));
-    return folderId; // Return folderId if needed
-  } catch (error) {
-    console.error('Failed to create folder', error);
-    throw error;
-  }
-};
-export const getFolders = (userId, parentFolderId) => async (dispatch) => {
-  dispatch(setLoading(true));
-  try {
-    let query = fire.firestore().collection("folders").where("userId", "==", userId);
-    if (parentFolderId) {
-      query = query.where("parent", "==", parentFolderId);
-    }
-    const foldersSnapshot = await query.get();
-
-    const foldersData = foldersSnapshot.docs.map((folder) => ({
-      data: folder.data(),
-      docId: folder.id,
-    }));
-
-    dispatch(addFolders(foldersData));
-  } catch (error) {
-    console.error("Error fetching folders:", error);
-  } finally {
-    dispatch(setLoading(false));
-  }
-};
-
-// Action creator to change the current folder
-export const changeFolder = (folderId) => (dispatch) => {
-  dispatch(setChangeFolder(folderId));
-};
-
-// Action creators for files
 const addFiles = (payload) => ({
   type: types.ADD_FILES,
   payload,
@@ -89,43 +32,89 @@ const addFile = (payload) => ({
   payload,
 });
 
-// Thunk action creator to fetch user's files from Firestore
-export const getFiles = (userId) => async (dispatch) => {
-  dispatch(setLoading(true));
-  try {
-    const filesSnapshot = await fire
-      .firestore()
-      .collection("files")
-      .where("userId", "==", userId)
-      .get();
+const setFileData = (payload) => ({
+  type: types.SET_FILE_DATA,
+  payload,
+});
+//--
 
-    const filesData = filesSnapshot.docs.map((file) => ({
-      data: file.data(),
-      docId: file.id,
-    }));
-
-    dispatch(addFiles(filesData));
-  } catch (error) {
-    console.error("Error fetching files:", error);
-  } finally {
-    dispatch(setLoading(false));
-  }
+export const createFolder = (data) => (dispatch) => {
+  fire
+    .firestore()
+    .collection("folders")
+    .add(data)
+    .then(async (folder) => {
+      const folderData = await (await folder.get()).data();
+      const folderId = folder.id;
+      dispatch(addFolder({ data: folderData, docId: folderId }));
+      alert("Folder created successfully");
+    });
 };
 
-// Thunk action creator to create a file in Firestore
-export const createFile = (data, setSuccess) => async (dispatch) => {
-  dispatch(setLoading(true)); // Set loading state to true
-  try {
-    const fileRef = await fire.firestore().collection("files").add(data);
-    const fileId = fileRef.id;
-    const fileData = (await fileRef.get()).data();
+export const getFolders = (userId) => (dispatch) => {
+  dispatch(setLoading(true));
+  fire
+    .firestore()
+    .collection("folders")
+    .where("userId", "==", userId)
+    .get()
+    .then(async (folders) => {
+      const foldersData = await folders.docs.map((folder) => ({
+        data: folder.data(),
+        docId: folder.id,
+      }));
+      dispatch(setLoading(false));
+      dispatch(addFolders(foldersData));
+    });
+};
 
-    dispatch(addFile({ data: fileData, docId: fileId }));
-    setSuccess(true);
-  } catch (error) {
-    console.error('Failed to create file', error);
-    setSuccess(false);
-  } finally {
-    dispatch(setLoading(false)); // Set loading state to false
-  }
+export const changeFolder = (folderId) => (dispatch) => {
+  dispatch(setChangeFolder(folderId));
+};
+
+// Action creators for files
+
+export const getFiles = (userId) => (dispatch) => {
+  fire
+    .firestore()
+    .collection("files")
+    .where("userId", "==", userId)
+    .get()
+    .then(async (files) => {
+      const filesData = await files.docs.map((files) => ({
+        data: files.data(),
+        docId: files.id,
+      }));
+      dispatch(addFiles(filesData));
+    });
+};
+
+export const createFile = (data, setSuccess) => (dispatch) => {
+  fire
+    .firestore()
+    .collection("files")
+    .add(data)
+    .then(async (file) => {
+      const fileData = await (await file.get()).data();
+      const fileId = file.id;
+      alert("File created successfully");
+      dispatch(addFile({ data: fileData, docId: fileId }));
+      setSuccess(true);
+    })
+    .catch(() => {
+      setSuccess(false);
+    });
+};
+export const updateFileData = (fileId, data) => (dispatch) => {
+  fire
+    .firestore()
+    .collection("files")
+    .doc(fileId)
+    .update({ data })
+    .then(() => {
+      dispatch(setFileData({ fileId, data }));
+    })
+    .catch(() => {
+      alert("Error saving file");
+    });
 };

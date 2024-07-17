@@ -1,12 +1,10 @@
-import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFolder, faFileAlt } from "@fortawesome/free-solid-svg-icons";
-import "./ShowItems.css";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { changeFolder } from "../../../redux/actionCreators/fileFoldersActionCreator";
 
-const ShowItems = ({ title, items, type }) => {
+const ShowItems = ({ title, items = [], type }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -15,9 +13,13 @@ const ShowItems = ({ title, items, type }) => {
       dispatch(changeFolder(itemId));
       navigate(`/dashboard/folder/${itemId}`);
     } else {
-      alert("File clicked");
+      navigate(`/dashboard/file/${itemId}`);
     }
   };
+
+  if (!Array.isArray(items)) {
+    return <div>Error: Items should be an array.</div>;
+  }
 
   return (
     <div className="item-container">
