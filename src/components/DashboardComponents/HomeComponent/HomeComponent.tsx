@@ -1,19 +1,12 @@
-import { shallowEqual, useSelector } from "react-redux";
+import React from "react";
+import { useSelector } from "react-redux";
 import ShowItems from "../ShowItems/ShowItems";
+import { selectRootFolders, selectRootFiles } from "../selectors";
 
 const HomeComponent = () => {
-  const { isLoading, userFolders, userFiles } = useSelector(
-    (state) => ({
-      isLoading: state.filefolders.isLoading,
-      userFiles: state.filefolders.userFiles.filter(
-        (file) => file.data.parent === "root"
-      ),
-      userFolders: state.filefolders.userFolders.filter(
-        (folder) => folder.data.parent === "root"
-      ),
-    }),
-    shallowEqual
-  );
+  const isLoading = useSelector((state) => state.filefolders.isLoading);
+  const userFolders = useSelector(selectRootFolders);
+  const userFiles = useSelector(selectRootFiles);
 
   return (
     <div className="col-md-12 w-100">
@@ -26,7 +19,7 @@ const HomeComponent = () => {
             type="folder"
             items={userFolders}
           />
-          <ShowItems title="Created Files" type="files" items={userFiles} />
+          <ShowItems title="Files" type="files" items={userFiles} />
         </>
       )}
     </div>

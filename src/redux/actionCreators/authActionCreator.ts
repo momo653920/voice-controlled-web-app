@@ -112,7 +112,7 @@ export const signOutUser = () => (dispatch) => {
     });
 };
 
-// Check if the user is logged in
+// Action creator
 export const checkIsLoggedIn = () => (dispatch) => {
   fire.auth().onAuthStateChanged((user) => {
     if (user) {
@@ -123,6 +123,8 @@ export const checkIsLoggedIn = () => (dispatch) => {
           displayName: user.displayName,
         })
       );
+    } else {
+      dispatch(logoutUser());
     }
   });
 };

@@ -1,24 +1,24 @@
-import { shallowEqual, useSelector } from "react-redux";
+// FolderComponent.js
+import React from "react";
+import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import ShowItems from "../ShowItems/ShowItems";
+import {
+  selectCurrentFolderData,
+  selectChildFolders,
+  selectChildFiles,
+} from "../selectors";
 
 const FolderComponent = () => {
   const { folderId } = useParams();
 
-  const { currentFolderData, childFolders, childFiles } = useSelector(
-    (state) => ({
-      currentFolderData: state.filefolders.userFolders.find(
-        (folder) => folder.docId === folderId
-      )?.data,
-      childFolders: state.filefolders.userFolders.filter(
-        (folder) => folder.data.parent === folderId
-      ),
-      childFiles: state.filefolders.userFiles.filter(
-        (file) => file.data.parent === folderId
-      ),
-    }),
-    shallowEqual
+  const currentFolderData = useSelector((state) =>
+    selectCurrentFolderData(state, folderId)
   );
+  const childFolders = useSelector((state) =>
+    selectChildFolders(state, folderId)
+  );
+  const childFiles = useSelector((state) => selectChildFiles(state, folderId));
 
   return (
     <div>

@@ -81,13 +81,11 @@ const CreateFile = ({ setIsCreateFileModalOpen }) => {
     };
 
     try {
-      // Dispatch action to create folder
       await dispatch(createFile(data, setSuccess));
-      console.log("data", data);
       setIsCreateFileModalOpen(false); // Close modal on success
     } catch (error) {
-      console.error("Error creating folder:", error);
-      setError("Failed to create folder. Please try again.");
+      console.error("Error creating file:", error);
+      setError("Failed to create file. Please try again.");
     } finally {
       setIsLoading(false); // Reset loading state
     }

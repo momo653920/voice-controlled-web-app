@@ -5,11 +5,12 @@ const initialState = {
   currentFolder: "root",
   userFolders: [],
   userFiles: [],
-  adminFolders: [],
-  adminFiles: [],
 };
 
-const FileFoldersReducer = (state = initialState, action) => {
+const FileFoldersReducer = (
+  state = initialState,
+  action: FileFoldersActionTypes
+) => {
   switch (action.type) {
     case types.CREATE_FOLDER:
       return {
@@ -42,14 +43,27 @@ const FileFoldersReducer = (state = initialState, action) => {
         userFiles: action.payload,
       };
     case types.SET_FILE_DATA:
-      const { fileId, data } = action.payload;
-      const allFiles = state.userFiles;
-      const currentFile = allFiles.find((file) => file.docId === fileId);
-      currentFile.data.data = data;
+      const { fileId, data, updatedAt } = action.payload;
       return {
         ...state,
         userFiles: state.userFiles.map((file) =>
-          file.docId === fileId ? currentFile : file
+          file.docId === fileId
+            ? { ...file, data: { ...file.data, data }, updatedAt }
+            : file
+        ),
+      };
+    case types.DELETE_FOLDER_SUCCESS:
+      return {
+        ...state,
+        userFolders: state.userFolders.filter(
+          (folder) => folder.docId !== action.payload
+        ),
+      };
+    case types.DELETE_FILE_SUCCESS:
+      return {
+        ...state,
+        userFiles: state.userFiles.filter(
+          (file) => file.docId !== action.payload
         ),
       };
     default:

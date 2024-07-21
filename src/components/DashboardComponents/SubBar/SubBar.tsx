@@ -9,7 +9,11 @@ import { useNavigate } from "react-router-dom";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { changeFolder } from "../../../redux/actionCreators/fileFoldersActionCreator";
 
-const SubBar = ({ setIsCreateFolderModalOpen, setIsCreateFileModalOpen }) => {
+const SubBar = ({
+  setIsCreateFolderModalOpen,
+  setIsCreateFileModalOpen,
+  setIsFileUploadModalOpen,
+}) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { currentFolder, currentFolderData, userFolders } = useSelector(
@@ -27,6 +31,7 @@ const SubBar = ({ setIsCreateFolderModalOpen, setIsCreateFileModalOpen }) => {
     navigate(link);
     dispatch(changeFolder(id));
   };
+
   return (
     <nav className="navbar navbar-expand-lg mt-3 navbar-light bg-white py-2">
       <nav className="ms-5" aria-label="breadcrumb">
@@ -39,20 +44,20 @@ const SubBar = ({ setIsCreateFolderModalOpen, setIsCreateFileModalOpen }) => {
               >
                 Home
               </button>
-              {currentFolderData?.data.path.map((folder, index) => {
+              {currentFolderData?.data.path.map((folder, index) => (
                 <button
                   key={index}
                   className="breadcrumb-item btn btn-link"
                   onClick={() =>
                     handleNavigate(
-                      "/dashboard/folder/${userFolders.find((fldr)=>folder ===fldr.docId).docId}",
-                      userFolders.find((fldr) => folder === fldr.docId).docId
+                      `/dashboard/folder/${userFolders.find((fldr) => folder === fldr.docId)?.docId}`,
+                      userFolders.find((fldr) => folder === fldr.docId)?.docId
                     )
                   }
                 >
                   {userFolders.find((fldr) => folder === fldr.docId)?.data.name}
-                </button>;
-              })}
+                </button>
+              ))}
               <li className="breadcrumb-item active">
                 {currentFolderData?.data.name}
               </li>
@@ -69,7 +74,10 @@ const SubBar = ({ setIsCreateFolderModalOpen, setIsCreateFileModalOpen }) => {
 
       <ul className="navbar-nav ms-auto me-5">
         <li className="navbar-item mx-2">
-          <button className="btn btn-outline-dark btn-lg navbar-button">
+          <button
+            className="btn btn-outline-dark btn-lg navbar-button"
+            onClick={() => setIsFileUploadModalOpen(true)}
+          >
             <FontAwesomeIcon icon={faFileArrowUp} />
             &nbsp; Upload File
           </button>

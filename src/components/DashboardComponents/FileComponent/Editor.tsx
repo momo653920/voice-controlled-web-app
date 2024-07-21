@@ -25,15 +25,17 @@ const formats = [
   "image",
 ];
 
-const CodeEditor = ({ data, setData }) => {
+const Editor: React.FC<{ data: string; setData: (data: string) => void }> = ({
+  data,
+  setData,
+}) => {
   return (
     <div className="editor-wrapper">
       <div className="editor-container">
         <ReactQuill
-          bounds={".editor-input"}
-          theme="bubble" // Set the theme to bubble
+          theme="bubble"
           value={data}
-          onChange={setData} // Directly pass setData to handle changes
+          onChange={setData}
           className="editor-input"
           modules={modules}
           formats={formats}
@@ -43,4 +45,4 @@ const CodeEditor = ({ data, setData }) => {
   );
 };
 
-export default CodeEditor;
+export default Editor;
