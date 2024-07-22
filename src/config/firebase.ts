@@ -20,3 +20,9 @@ const storage = firebase.storage();
 
 export default fire;
 export { storage };
+
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+}
+
+export const auth = firebase.auth();

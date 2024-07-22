@@ -1,121 +1,104 @@
 import * as types from "../actionTypes/authActionTypes";
 import fire from "../../config/firebase";
 
-// Action creators for logging in and logging out
-const loginUser = (payload) => {
-  return {
-    type: types.SIGN_IN,
-    payload,
-  };
+// TypeScript interfaces for better type safety
+interface User {
+  uid: string;
+  email: string | null;
+  displayName: string | null;
+  role?: string;
+}
+
+interface SignInUserPayload extends User {
+  role: string;
+}
+
+const fetchUserRole = async (uid: string): Promise<string> => {
+  try {
+    const adminUserDoc = await fire
+      .firestore()
+      .collection("admin-users")
+      .doc(uid)
+      .get();
+    if (adminUserDoc.exists) {
+      return adminUserDoc.data()?.role || "user";
+    }
+    return "user";
+  } catch (error) {
+    console.error("Error fetching user role:", error);
+    throw new Error("Error fetching user role");
+  }
 };
 
-const logoutUser = () => {
-  return {
-    type: types.SIGN_OUT,
-  };
-};
+const loginUser = (payload: SignInUserPayload) => ({
+  type: types.SIGN_IN,
+  payload,
+});
 
-// Async action creator for signing in
+const logoutUser = () => ({
+  type: types.SIGN_OUT,
+});
+
 export const signInUser =
-  (email, password, setLoading, setError, setSuccessMessage) => (dispatch) => {
+  (
+    email: string,
+    password: string,
+    setLoading: (loading: boolean) => void,
+    setError: (error: string) => void,
+    setSuccessMessage?: (message: string) => void
+  ) =>
+  async (dispatch: (action: any) => void) => {
     setLoading(true);
-    fire
-      .auth()
-      .signInWithEmailAndPassword(email, password)
-      .then((user) => {
-        dispatch(
-          loginUser({
-            uid: user.user.uid,
-            email: user.user.email,
-            displayName: user.user.displayName,
-          })
-        );
-        setLoading(false);
-        setError("");
-        if (setSuccessMessage) {
-          setSuccessMessage("You are now logged in.");
-        }
-      })
-      .catch((error) => {
-        setLoading(false);
-        setError("Invalid Email or Password");
-        console.error("Error signing in:", error);
-      });
+    try {
+      const userCredential = await fire
+        .auth()
+        .signInWithEmailAndPassword(email, password);
+      const user = userCredential.user;
+      if (!user) throw new Error("No user found");
+
+      const role = await fetchUserRole(user.uid);
+
+      dispatch(
+        loginUser({
+          uid: user.uid,
+          email: user.email,
+          displayName: user.displayName,
+          role: role || "user",
+        })
+      );
+
+      setLoading(false);
+      setError("");
+      if (setSuccessMessage) {
+        setSuccessMessage("You are now logged in.");
+      }
+    } catch (error) {
+      setLoading(false);
+      setError("Invalid Email or Password");
+      console.error("Error signing in:", error);
+    }
   };
 
-// Async action creator for signing up
 export const signUpUser =
-  (name, email, password, setLoading, setError, setSuccessMessage) =>
-  (dispatch) => {
+  (
+    name: string,
+    email: string,
+    password: string,
+    setLoading: (loading: boolean) => void,
+    setError: (error: string) => void,
+    setSuccessMessage?: (message: string) => void
+  ) =>
+  async (dispatch: (action: any) => void) => {
     setLoading(true);
-    fire
-      .auth()
-      .createUserWithEmailAndPassword(email, password)
-      .then((user) => {
-        fire
-          .auth()
-          .currentUser.updateProfile({
-            displayName: name,
-          })
-          .then(() => {
-            const currentUser = fire.auth().currentUser;
-            dispatch(
-              loginUser({
-                uid: currentUser.uid,
-                email: currentUser.email,
-                displayName: currentUser.displayName,
-              })
-            );
-            setLoading(false);
-            setError("");
-            if (setSuccessMessage) {
-              setSuccessMessage(
-                "Registration successful! You are now logged in."
-              );
-            }
-          })
-          .catch((error) => {
-            setLoading(false);
-            setError("Error updating profile");
-            console.error("Error updating profile:", error);
-          });
-      })
-      .catch((error) => {
-        setLoading(false);
-        switch (error.code) {
-          case "auth/email-already-in-use":
-            setError("Email already in use");
-            break;
-          case "auth/invalid-email":
-            setError("Invalid Email");
-            break;
-          case "auth/weak-password":
-            setError("Weak Password");
-            break;
-          default:
-            setError("Error signing up");
-            console.error("Error signing up:", error);
-        }
-      });
-  };
+    try {
+      const userCredential = await fire
+        .auth()
+        .createUserWithEmailAndPassword(email, password);
+      const user = userCredential.user;
+      if (!user) throw new Error("No user found");
 
-// Async action creator for signing out
-export const signOutUser = () => (dispatch) => {
-  fire
-    .auth()
-    .signOut()
-    .then(() => {
-      dispatch(logoutUser());
-    })
-    .catch((error) => {
-      console.error("Error signing out:", error);
-    });
-};
+      await user.updateProfile({ displayName: name });
 
-// Action creator
-export const checkIsLoggedIn = () => (dispatch) => {
-  fire.auth().onAuthStateChanged((user) => {
-    if (user) {
       dispatch(
         loginUser({
           uid: user.uid,
@@ -123,7 +106,55 @@ export const checkIsLoggedIn = () => (dispatch) => {
           displayName: user.displayName,
         })
       );
+
+      setLoading(false);
+      setError("");
+      if (setSuccessMessage) {
+        setSuccessMessage("Registration successful! You are now logged in.");
+      }
+    } catch (error) {
+      setLoading(false);
+      switch (error.code) {
+        case "auth/email-already-in-use":
+          setError("Email already in use");
+          break;
+        case "auth/invalid-email":
+          setError("Invalid Email");
+          break;
+        case "auth/weak-password":
+          setError("Weak Password");
+          break;
+        default:
+          setError("Error signing up");
+          console.error("Error signing up:", error);
+      }
+    }
+  };
+
+export const signOutUser = () => async (dispatch: (action: any) => void) => {
+  try {
+    await fire.auth().signOut();
+    dispatch(logoutUser());
+  } catch (error) {
+    console.error("Error signing out:", error);
+  }
+};
+
+export const checkIsLoggedIn = () => (dispatch: (action: any) => void) => {
+  fire.auth().onAuthStateChanged(async (user) => {
+    if (user) {
+      const role = await fetchUserRole(user.uid);
+
+      dispatch(
+        loginUser({
+          uid: user.uid,
+          email: user.email,
+          displayName: user.displayName,
+          role: role,
+        })
+      );
     } else {
+      console.log("No user authenticated");
       dispatch(logoutUser());
     }
   });

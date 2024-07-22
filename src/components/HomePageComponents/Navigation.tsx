@@ -1,11 +1,13 @@
-import { Link } from "react-router-dom";
-
+import { Link, useLocation } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { signOutUser } from "../../redux/actionCreators/authActionCreator";
 
 const NavigationComponent = () => {
-  const { isAuthenticated, user } = useSelector((state) => state.auth);
+  const { isAuthenticated, user, role } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
+  const location = useLocation(); // Get current route
+
+  const adminButtonLink = location.pathname === "/admin" ? "/" : "/admin";
 
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -22,6 +24,13 @@ const NavigationComponent = () => {
                 <span className="text-warning"> {user.displayName} </span>
               </p>
             </li>
+            {role === "admin" && (
+              <li className="nav-item mx-2">
+                <Link className="btn btn-danger" to={adminButtonLink}>
+                  {location.pathname === "/admin" ? "Home" : "Users"}
+                </Link>
+              </li>
+            )}
             <li className="nav-item mx-2">
               <Link className="btn btn-primary" to="/dashboard">
                 Dashboard
@@ -32,7 +41,6 @@ const NavigationComponent = () => {
                 className="btn btn-success"
                 onClick={() => dispatch(signOutUser())}
               >
-                {" "}
                 Logout
               </button>
             </li>

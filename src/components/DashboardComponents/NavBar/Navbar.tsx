@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { signOutUser } from "../../../redux/actionCreators/authActionCreator";
 
 const Navbar = () => {
-  const { isAuthenticated, user } = useSelector((state) => state.auth);
+  const { isAuthenticated, user, role } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
   return (
@@ -22,11 +22,13 @@ const Navbar = () => {
                 <span className="fw-bold"> {user.displayName} </span>
               </p>
             </li>
+
             <li className="nav-item mx-2">
               <Link className="btn btn-primary" to="/">
                 Home
               </Link>
             </li>
+
             <li className="nav-item">
               <button
                 className="btn btn-success"

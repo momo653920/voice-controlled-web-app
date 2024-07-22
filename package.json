@@ -17,6 +17,8 @@
     "axios": "^1.7.2",
     "bootstrap": "^5.3.3",
     "firebase": "^10.12.3",
+    "firebase-admin": "^12.2.0",
+    "firebase-tools": "^13.13.3",
     "highlight.js": "^11.10.0",
     "lodash.debounce": "^4.0.8",
     "quill": "^2.0.2",

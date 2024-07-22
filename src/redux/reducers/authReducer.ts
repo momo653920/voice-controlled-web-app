@@ -3,25 +3,20 @@ import * as types from "../actionTypes/authActionTypes";
 const initialState = {
   isAuthenticated: false,
   user: null,
-  isAdmin: false,
+  role: "user",
 };
 
-const authReducer = (state = initialState, action) => {
+const authReducer = (state = initialState, action: any) => {
   switch (action.type) {
     case types.SIGN_IN:
       return {
         ...state,
         isAuthenticated: true,
         user: action.payload,
-        isAdmin: action.payload.admin || false, // Set admin status
+        role: action.payload.role || "user",
       };
     case types.SIGN_OUT:
-      return {
-        ...state,
-        isAuthenticated: false,
-        user: null,
-        isAdmin: false, // Reset admin status
-      };
+      return initialState;
     default:
       return state;
   }

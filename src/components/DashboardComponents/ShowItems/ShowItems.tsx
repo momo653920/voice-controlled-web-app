@@ -3,6 +3,15 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faFolder,
   faFileAlt,
+  faFilePdf,
+  faFileImage,
+  faFileWord,
+  faFileExcel,
+  faFilePowerpoint,
+  faFileVideo,
+  faFileAudio,
+  faFileCode,
+  faFileText,
   faEllipsisH,
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
@@ -15,16 +24,35 @@ import {
 import "./ShowItems.css";
 import ConfirmationModal from "./ConfirmationModal";
 
-const ShowItems = ({ title, items = [], type }) => {
+interface ItemData {
+  name: string;
+  extension?: string;
+  itemsCount?: number;
+  url?: string; // URL for downloading
+}
+
+interface Item {
+  docId: string;
+  data: ItemData;
+}
+
+interface ShowItemsProps {
+  title: string;
+  items: Item[];
+  type: "folder" | "files";
+}
+
+const ShowItems: React.FC<ShowItemsProps> = ({ title, items = [], type }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [dropdownOpen, setDropdownOpen] = useState(null);
+  const [dropdownOpen, setDropdownOpen] = useState<string | null>(null);
   const [confirmModalOpen, setConfirmModalOpen] = useState(false);
-  const [itemToDelete, setItemToDelete] = useState(null);
+  const [itemToDelete, setItemToDelete] = useState<string | null>(null);
 
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (!event.target.closest(".item")) {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      if (!target.closest(".item")) {
         setDropdownOpen(null);
       }
     };
@@ -35,7 +63,7 @@ const ShowItems = ({ title, items = [], type }) => {
     };
   }, []);
 
-  const handleDoubleClick = (itemId) => {
+  const handleDoubleClick = (itemId: string) => {
     if (type === "folder") {
       dispatch(changeFolder(itemId));
       navigate(`/dashboard/folder/${itemId}`);
@@ -44,12 +72,12 @@ const ShowItems = ({ title, items = [], type }) => {
     }
   };
 
-  const handleDotsClick = (event, itemId) => {
+  const handleDotsClick = (event: React.MouseEvent, itemId: string) => {
     event.stopPropagation();
     setDropdownOpen(dropdownOpen === itemId ? null : itemId);
   };
 
-  const confirmDelete = (itemId) => {
+  const confirmDelete = (itemId: string) => {
     setItemToDelete(itemId);
     setConfirmModalOpen(true);
   };
@@ -71,6 +99,90 @@ const ShowItems = ({ title, items = [], type }) => {
     setItemToDelete(null);
   };
 
+  const getFileIcon = (extension: string | undefined) => {
+    switch (extension?.toLowerCase()) {
+      case "pdf":
+        return (
+          <FontAwesomeIcon icon={faFilePdf} size="4x" className="item-icon" />
+        );
+      case "jpg":
+      case "jpeg":
+      case "png":
+      case "gif":
+        return (
+          <FontAwesomeIcon icon={faFileImage} size="4x" className="item-icon" />
+        );
+      case "doc":
+      case "docx":
+        return (
+          <FontAwesomeIcon icon={faFileWord} size="4x" className="item-icon" />
+        );
+      case "xls":
+      case "xlsx":
+        return (
+          <FontAwesomeIcon icon={faFileExcel} size="4x" className="item-icon" />
+        );
+      case "ppt":
+      case "pptx":
+        return (
+          <FontAwesomeIcon
+            icon={faFilePowerpoint}
+            size="4x"
+            className="item-icon"
+          />
+        );
+      case "mp4":
+      case "mkv":
+      case "avi":
+        return (
+          <FontAwesomeIcon icon={faFileVideo} size="4x" className="item-icon" />
+        );
+      case "mp3":
+      case "wav":
+        return (
+          <FontAwesomeIcon icon={faFileAudio} size="4x" className="item-icon" />
+        );
+      case "html":
+      case "css":
+      case "js":
+      case "json":
+        return (
+          <FontAwesomeIcon icon={faFileCode} size="4x" className="item-icon" />
+        );
+      case "txt":
+        return (
+          <FontAwesomeIcon icon={faFileText} size="4x" className="item-icon" />
+        );
+      default:
+        return (
+          <FontAwesomeIcon icon={faFileAlt} size="4x" className="item-icon" />
+        );
+    }
+  };
+
+  const handleDownload = async (url: string | undefined, fileName: string) => {
+    if (url) {
+      try {
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+
+        const fileContent = await response.text();
+        const blob = new Blob([fileContent], { type: "text/plain" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = fileName;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(link.href);
+      } catch (error) {
+        console.error("Error downloading file:", error);
+      }
+    }
+  };
+
   return (
     <div className="item-container">
       <h4 className="item-title">{title}</h4>
@@ -88,11 +200,7 @@ const ShowItems = ({ title, items = [], type }) => {
                 className="item-icon"
               />
             ) : (
-              <FontAwesomeIcon
-                icon={faFileAlt}
-                size="4x"
-                className="item-icon"
-              />
+              getFileIcon(item.data.extension)
             )}
             <FontAwesomeIcon
               icon={faEllipsisH}
@@ -102,6 +210,14 @@ const ShowItems = ({ title, items = [], type }) => {
             <div
               className={`dropdown-menu ${dropdownOpen === item.docId ? "show" : ""}`}
             >
+              {type === "files" && item.data.url && (
+                <button
+                  className="dropdown-item download-btn"
+                  onClick={() => handleDownload(item.data.url, item.data.name)}
+                >
+                  Download
+                </button>
+              )}
               <button
                 className="dropdown-item"
                 onClick={() => confirmDelete(item.docId)}
@@ -110,6 +226,9 @@ const ShowItems = ({ title, items = [], type }) => {
               </button>
             </div>
             <p className={`item-name ${item.data.name}`}>{item.data.name}</p>
+            {type === "folder" && item.data.itemsCount !== undefined && (
+              <p className="items-count">{item.data.itemsCount} items</p>
+            )}
           </div>
         ))}
       </div>
