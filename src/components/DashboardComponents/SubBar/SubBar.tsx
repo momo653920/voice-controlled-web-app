@@ -4,6 +4,7 @@ import {
   faFileAlt,
   faFileArrowUp,
   faFolderPlus,
+  faArrowLeft, // Importing the back arrow icon
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
@@ -30,6 +31,24 @@ const SubBar = ({
   const handleNavigate = (link, id) => {
     navigate(link);
     dispatch(changeFolder(id));
+  };
+
+  const handleBack = () => {
+    if (currentFolderData?.data.path.length > 0) {
+      const parentFolderId =
+        currentFolderData.data.path[currentFolderData.data.path.length - 1];
+      const parentFolder = userFolders.find(
+        (fldr) => fldr.docId === parentFolderId
+      );
+      if (parentFolder) {
+        handleNavigate(
+          `/dashboard/folder/${parentFolder.docId}`,
+          parentFolder.docId
+        );
+      }
+    } else {
+      handleNavigate("/dashboard", "root");
+    }
   };
 
   return (
@@ -73,6 +92,18 @@ const SubBar = ({
       </nav>
 
       <ul className="navbar-nav ms-auto me-5">
+        {/* Back Button */}
+        {currentFolder !== "root" && (
+          <li className="navbar-item mx-2">
+            <button
+              className="btn btn-outline-dark btn-lg navbar-button"
+              onClick={handleBack}
+            >
+              <FontAwesomeIcon icon={faArrowLeft} />
+              &nbsp; Back
+            </button>
+          </li>
+        )}
         <li className="navbar-item mx-2">
           <button
             className="btn btn-outline-dark btn-lg navbar-button"
