@@ -10,9 +10,7 @@ import { NavigationComponent } from "../../components/HomePageComponents";
 
 const AdminDashboard: React.FC = () => {
   const dispatch = useDispatch();
-  const { users, loading, error } = useSelector(
-    (state: RootState) => state.user
-  );
+  const { users, loading, error } = useSelector((state: RootState) => state.user);
 
   useEffect(() => {
     dispatch(fetchUsers());
@@ -25,12 +23,8 @@ const AdminDashboard: React.FC = () => {
       : httpsCallable(functions, "disableUser");
 
     callableFunction({ uid: userId })
-      .then(() => {
-        dispatch(fetchUsers()); // Re-fetch users after status update
-      })
-      .catch((error) => {
-        console.error("Error updating user status:", error);
-      });
+      .then(() => dispatch(fetchUsers()))
+      .catch((error) => console.error("Error updating user status:", error));
   };
 
   const handlePasswordReset = (email: string) => {
@@ -38,13 +32,8 @@ const AdminDashboard: React.FC = () => {
     const resetPassword = httpsCallable(functions, "resetPassword");
 
     resetPassword({ email })
-      .then((result) => {
-        // Provide the reset link or handle accordingly
-        console.log("Password reset link:", result.data.resetLink);
-      })
-      .catch((error) => {
-        console.error("Error resetting password:", error);
-      });
+      .then((result) => console.log("Password reset link:", result.data.resetLink))
+      .catch((error) => console.error("Error resetting password:", error));
   };
 
   const handleDeleteUser = (userId: string) => {
@@ -52,12 +41,8 @@ const AdminDashboard: React.FC = () => {
     const deleteUser = httpsCallable(functions, "deleteUser");
 
     deleteUser({ uid: userId })
-      .then(() => {
-        dispatch(fetchUsers()); // Re-fetch users after deletion
-      })
-      .catch((error) => {
-        console.error("Error deleting user:", error);
-      });
+      .then(() => dispatch(fetchUsers()))
+      .catch((error) => console.error("Error deleting user:", error));
   };
 
   if (loading) return <p>Loading...</p>;

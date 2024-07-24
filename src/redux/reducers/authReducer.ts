@@ -1,12 +1,22 @@
 import * as types from "../actionTypes/authActionTypes";
+import { AuthActionTypes } from "../actionTypes/authActionTypes";
 
-const initialState = {
+interface AuthState {
+  isAuthenticated: boolean;
+  user: any | null;
+  role: string;
+}
+
+const initialState: AuthState = {
   isAuthenticated: false,
   user: null,
   role: "user",
 };
 
-const authReducer = (state = initialState, action: any) => {
+const authReducer = (
+  state = initialState,
+  action: AuthActionTypes
+): AuthState => {
   switch (action.type) {
     case types.SIGN_IN:
       return {

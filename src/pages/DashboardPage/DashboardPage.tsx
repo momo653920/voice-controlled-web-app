@@ -15,7 +15,7 @@ import FileComponent from "../../components/DashboardComponents/FileComponent/Fi
 import UploadFile from "../../components/DashboardComponents/UploadFile/UploadFile";
 import { RootState } from "../../redux/store";
 
-const DashboardPage = () => {
+const DashboardPage: React.FC = () => {
   const [isCreateFolderModalOpen, setIsCreateFolderModalOpen] = useState(false);
   const [isCreateFileModalOpen, setIsCreateFileModalOpen] = useState(false);
   const [isFileUploadModalOpen, setIsFileUploadModalOpen] = useState(false);
@@ -35,9 +35,7 @@ const DashboardPage = () => {
   );
 
   useEffect(() => {
-    if (!isLoggedIn) {
-      navigate("/");
-    }
+    if (!isLoggedIn) navigate("/");
   }, [isLoggedIn, navigate]);
 
   useEffect(() => {

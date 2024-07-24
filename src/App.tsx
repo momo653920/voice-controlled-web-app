@@ -1,3 +1,4 @@
+// App.js
 import React, { useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -5,6 +6,17 @@ import { HomePage, Register, Login, DashboardPage } from "./pages";
 import { checkIsLoggedIn } from "./redux/actionCreators/authActionCreator";
 import { RootState } from "./redux/store";
 import AdminDashboard from "./pages/DashboardPage/AdminDashboard";
+import CreateFile from "./components/DashboardComponents/CreateFile/CreateFile";
+
+const PrivateRoute = ({
+  element,
+  isAuthenticated,
+}: {
+  element: React.ReactNode;
+  isAuthenticated: boolean;
+}) => {
+  return isAuthenticated ? <>{element}</> : <HomePage />;
+};
 
 const App: React.FC = () => {
   const dispatch = useDispatch();
@@ -25,7 +37,12 @@ const App: React.FC = () => {
         <Route path="/register" element={<Register />} />
         <Route
           path="/dashboard/*"
-          element={isAuthenticated ? <DashboardPage /> : <HomePage />}
+          element={
+            <PrivateRoute
+              element={<DashboardPage />}
+              isAuthenticated={isAuthenticated}
+            />
+          }
         />
         <Route
           path="/admin"
@@ -37,6 +54,7 @@ const App: React.FC = () => {
             )
           }
         />
+        <Route path="/create-file" element={<CreateFile />} />
       </Routes>
     </div>
   );

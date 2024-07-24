@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { signUpUser } from "../../redux/actionCreators/authActionCreator";
 import { useNavigate } from "react-router-dom";
@@ -25,12 +25,13 @@ const RegisterForm = () => {
       setError("Passwords do not match");
       return;
     }
+    // Add more validation if needed
     dispatch(
       signUpUser(name, email, password, setLoading, setError, setSuccessMessage)
     );
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (successMessage) {
       navigate("/dashboard");
     }
@@ -38,28 +39,31 @@ const RegisterForm = () => {
 
   return (
     <form onSubmit={handleSubmit}>
-      {error && <div className="alert alert-danger">{error}</div>}
+      {error && (
+        <div className="alert alert-danger" aria-live="assertive">
+          {error}
+        </div>
+      )}
       {successMessage && (
-        <div className="alert alert-success">{successMessage}</div>
+        <div className="alert alert-success" aria-live="assertive">
+          {successMessage}
+        </div>
       )}
       <div className="form-group my-2">
         <label htmlFor="email">Email:</label>
         <input
           type="email"
-          name="email"
-          placeholder="Enter email"
           id="email"
           className="form-control"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          aria-describedby="emailHelp"
         />
       </div>
       <div className="form-group my-2">
         <label htmlFor="name">Name:</label>
         <input
           type="text"
-          name="name"
-          placeholder="Enter name"
           id="name"
           className="form-control"
           value={name}
@@ -71,8 +75,6 @@ const RegisterForm = () => {
         <input
           type="password"
           id="password"
-          name="password"
-          placeholder="Enter password"
           className="form-control"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
@@ -83,8 +85,6 @@ const RegisterForm = () => {
         <input
           type="password"
           id="confirmPassword"
-          name="confirmPassword"
-          placeholder="Confirm password"
           className="form-control"
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}

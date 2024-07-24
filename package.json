@@ -20,6 +20,7 @@
     "firebase-admin": "^12.2.0",
     "firebase-tools": "^13.13.3",
     "highlight.js": "^11.10.0",
+    "js-cookie": "^3.0.5",
     "lodash.debounce": "^4.0.8",
     "quill": "^2.0.2",
     "re-reselect": "^5.1.0",

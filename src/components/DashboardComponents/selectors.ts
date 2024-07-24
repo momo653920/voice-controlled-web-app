@@ -1,4 +1,3 @@
-// selectors.js
 import { createSelector } from "reselect";
 
 const selectUserFolders = (state) => state.filefolders.userFolders;

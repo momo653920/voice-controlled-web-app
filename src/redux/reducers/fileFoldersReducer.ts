@@ -1,6 +1,14 @@
 import * as types from "../actionTypes/fileFoldersActionTypes";
+import { FileFoldersActionTypes } from "../actionTypes/fileFoldersActionTypes";
 
-const initialState = {
+interface FileFoldersState {
+  isLoading: boolean;
+  currentFolder: string;
+  userFolders: any[];
+  userFiles: any[];
+}
+
+const initialState: FileFoldersState = {
   isLoading: true,
   currentFolder: "root",
   userFolders: [],
@@ -10,7 +18,7 @@ const initialState = {
 const FileFoldersReducer = (
   state = initialState,
   action: FileFoldersActionTypes
-) => {
+): FileFoldersState => {
   switch (action.type) {
     case types.CREATE_FOLDER:
       return {

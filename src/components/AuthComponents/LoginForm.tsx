@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { signInUser } from "../../redux/actionCreators/authActionCreator";
 import { useNavigate } from "react-router-dom";
@@ -19,12 +19,13 @@ const LoginForm = () => {
       setError("Please fill all the fields");
       return;
     }
+    // Add more validation if needed
     dispatch(
       signInUser(email, password, setLoading, setError, setSuccessMessage)
     );
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (successMessage) {
       navigate("/dashboard");
     }
@@ -32,20 +33,25 @@ const LoginForm = () => {
 
   return (
     <form onSubmit={handleSubmit}>
-      {error && <div className="alert alert-danger">{error}</div>}
+      {error && (
+        <div className="alert alert-danger" aria-live="assertive">
+          {error}
+        </div>
+      )}
       {successMessage && (
-        <div className="alert alert-success">{successMessage}</div>
+        <div className="alert alert-success" aria-live="assertive">
+          {successMessage}
+        </div>
       )}
       <div className="form-group my-2">
         <label htmlFor="email">Email:</label>
         <input
           type="email"
-          name="email"
-          placeholder="Enter email"
           id="email"
           className="form-control"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          aria-describedby="emailHelp"
         />
       </div>
       <div className="form-group my-2">
@@ -53,8 +59,6 @@ const LoginForm = () => {
         <input
           type="password"
           id="password"
-          name="password"
-          placeholder="Enter password"
           className="form-control"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
