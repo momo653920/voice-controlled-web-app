@@ -1,4 +1,3 @@
-import React from "react";
 import { useSelector } from "react-redux";
 import ShowItems from "../ShowItems/ShowItems";
 import { selectRootFolders, selectRootFiles } from "../selectors";

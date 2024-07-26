@@ -4,7 +4,7 @@ import {
   faFileAlt,
   faFileArrowUp,
   faFolderPlus,
-  faArrowLeft, // Importing the back arrow icon
+  faArrowLeft,
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
@@ -92,7 +92,6 @@ const SubBar = ({
       </nav>
 
       <ul className="navbar-nav ms-auto me-5">
-        {/* Back Button */}
         {currentFolder !== "root" && (
           <li className="navbar-item mx-2">
             <button

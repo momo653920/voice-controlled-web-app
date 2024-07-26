@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 import { useSelector, useDispatch } from "react-redux";
 import { signOutUser } from "../../../redux/actionCreators/authActionCreator";
@@ -6,11 +6,13 @@ import { signOutUser } from "../../../redux/actionCreators/authActionCreator";
 const Navbar = () => {
   const { isAuthenticated, user, role } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
+  const location = useLocation();
 
+  const adminButtonLink = location.pathname === "/admin" ? "/" : "/admin";
   return (
-    <nav className="navbar navbar-expand-lg navbar-white bg-white shadow-sm p-3 ">
-      <Link className="navbar-brand ms-5" to="/dashboard">
-        File Management System
+    <nav className="navbar navbar-expand-lg navbar-white bg-white shadow-sm  ">
+      <Link className="navbar-brand text-black ms-5" to="/dashboard">
+        Jessica
       </Link>
 
       <ul className="navbar-nav ms-auto me-5">
@@ -22,12 +24,13 @@ const Navbar = () => {
                 <span className="fw-bold"> {user.displayName} </span>
               </p>
             </li>
-
-            <li className="nav-item mx-2">
-              <Link className="btn btn-primary" to="/">
-                Home
-              </Link>
-            </li>
+            {role === "admin" && (
+              <li className="nav-item mx-2">
+                <Link className="btn btn-danger" to={adminButtonLink}>
+                  {location.pathname === "/admin" ? "Home" : "Users"}
+                </Link>
+              </li>
+            )}
 
             <li className="nav-item">
               <button

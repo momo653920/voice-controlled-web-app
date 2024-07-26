@@ -61,7 +61,7 @@ const CreateFile = ({ setIsCreateFileModalOpen }) => {
       return;
     }
 
-    setIsLoading(true); // Start loading state
+    setIsLoading(true);
 
     const data = {
       createdAt: new Date(),
@@ -110,7 +110,7 @@ const CreateFile = ({ setIsCreateFileModalOpen }) => {
           <button
             className="btn"
             onClick={() => setIsCreateFileModalOpen(false)}
-            disabled={isLoading} // Disable button while loading
+            disabled={isLoading}
           >
             <FontAwesomeIcon icon={faTimes} className="text-black" />
           </button>
@@ -131,13 +131,13 @@ const CreateFile = ({ setIsCreateFileModalOpen }) => {
                 setFileName(e.target.value);
                 setError("");
               }}
-              disabled={isLoading} // Disable input while loading
+              disabled={isLoading}
             />
           </div>
           <button
             type="submit"
             className="btn btn-primary mt-3 w-100"
-            disabled={isLoading} // Disable button while loading
+            disabled={isLoading}
           >
             {isLoading ? "Creating..." : "Create File"}
           </button>

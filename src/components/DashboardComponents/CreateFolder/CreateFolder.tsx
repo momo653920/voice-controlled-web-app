@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 const CreateFolder = ({ setIsCreateFolderModalOpen }) => {
   const [folderName, setFolderName] = useState("");
   const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(false); // State to manage loading state
+  const [isLoading, setIsLoading] = useState(false);
 
   const { userFolders, user, currentFolder } = useSelector(
     (state) => ({
@@ -42,7 +42,7 @@ const CreateFolder = ({ setIsCreateFolderModalOpen }) => {
       return;
     }
 
-    setIsLoading(true); // Start loading state
+    setIsLoading(true);
 
     const data = {
       createdAt: new Date(),
@@ -59,14 +59,13 @@ const CreateFolder = ({ setIsCreateFolderModalOpen }) => {
     };
 
     try {
-      // Dispatch action to create folder
       await dispatch(createFolder(data));
-      setIsCreateFolderModalOpen(false); // Close modal on success
+      setIsCreateFolderModalOpen(false);
     } catch (error) {
       console.error("Error creating folder:", error);
       setError("Failed to create folder. Please try again.");
     } finally {
-      setIsLoading(false); // Reset loading state
+      setIsLoading(false);
     }
   };
 
@@ -89,7 +88,7 @@ const CreateFolder = ({ setIsCreateFolderModalOpen }) => {
           <button
             className="btn"
             onClick={() => setIsCreateFolderModalOpen(false)}
-            disabled={isLoading} // Disable button while loading
+            disabled={isLoading}
           >
             <FontAwesomeIcon icon={faTimes} className="text-black" />
           </button>
@@ -110,13 +109,13 @@ const CreateFolder = ({ setIsCreateFolderModalOpen }) => {
                 setFolderName(e.target.value);
                 setError("");
               }}
-              disabled={isLoading} // Disable input while loading
+              disabled={isLoading}
             />
           </div>
           <button
             type="submit"
             className="btn btn-primary mt-3 w-100"
-            disabled={isLoading} // Disable button while loading
+            disabled={isLoading}
           >
             {isLoading ? "Creating..." : "Create Folder"}
           </button>

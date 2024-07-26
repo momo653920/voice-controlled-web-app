@@ -28,7 +28,7 @@ interface ItemData {
   name: string;
   extension?: string;
   itemsCount?: number;
-  url?: string; // URL for downloading
+  url?: string;
 }
 
 interface Item {

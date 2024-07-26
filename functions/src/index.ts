@@ -30,7 +30,6 @@ exports.disableUser = functions.https.onCall(async (data, context) => {
   }
 });
 
-// Enable user account
 exports.enableUser = functions.https.onCall(async (data, context) => {
   if (!context.auth || context.auth.token.role !== "admin") {
     throw new functions.https.HttpsError(
@@ -48,7 +47,6 @@ exports.enableUser = functions.https.onCall(async (data, context) => {
   }
 });
 
-// Reset user password
 exports.resetPassword = functions.https.onCall(async (data, context) => {
   if (!context.auth || context.auth.token.role !== "admin") {
     throw new functions.https.HttpsError(
@@ -69,7 +67,6 @@ exports.resetPassword = functions.https.onCall(async (data, context) => {
   }
 });
 
-// Delete user account
 exports.deleteUser = functions.https.onCall(async (data, context) => {
   if (!context.auth || context.auth.token.role !== "admin") {
     throw new functions.https.HttpsError(

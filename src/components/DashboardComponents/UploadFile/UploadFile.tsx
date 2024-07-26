@@ -4,10 +4,9 @@ import { uploadFile } from "../../../redux/actionCreators/fileFoldersActionCreat
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 
-// Define interfaces for your state and props
 interface FileData {
   name: string;
-  data: string; // Adjust type if necessary
+  data: string;
 }
 
 interface CurrentFolder {
@@ -70,7 +69,7 @@ const UploadFile: React.FC<UploadFileProps> = ({
       return;
     }
 
-    setIsLoading(true); // Start loading state
+    setIsLoading(true);
 
     const data = {
       createdAt: new Date(),
@@ -86,17 +85,17 @@ const UploadFile: React.FC<UploadFileProps> = ({
       updatedAt: new Date(),
       extension: file.name.split(".").pop()?.toLowerCase() || "unknown",
       url: URL.createObjectURL(file),
-      data: "", // Adjust accordingly if you're handling actual file data
+      data: "",
     };
 
     try {
       await dispatch(uploadFile(file, data, setSuccess));
-      setIsFileUploadModalOpen(false); // Close modal on success
+      setIsFileUploadModalOpen(false);
     } catch (error) {
       console.error("Error uploading file:", error);
       setError("Failed to upload file. Please try again.");
     } finally {
-      setIsLoading(false); // Reset loading state
+      setIsLoading(false);
     }
   };
 
@@ -134,7 +133,7 @@ const UploadFile: React.FC<UploadFileProps> = ({
           <button
             className="btn"
             onClick={() => setIsFileUploadModalOpen(false)}
-            disabled={isLoading} // Disable button while loading
+            disabled={isLoading}
           >
             <FontAwesomeIcon icon={faTimes} className="text-black" />
           </button>
@@ -153,13 +152,13 @@ const UploadFile: React.FC<UploadFileProps> = ({
                 setFile(e.target.files ? e.target.files[0] : null);
                 setError("");
               }}
-              disabled={isLoading} // Disable input while loading
+              disabled={isLoading}
             />
           </div>
           <button
             type="submit"
             className="btn btn-primary mt-3 w-100"
-            disabled={isLoading} // Disable button while loading
+            disabled={isLoading}
           >
             {isLoading ? "Uploading..." : "Upload File"}
           </button>

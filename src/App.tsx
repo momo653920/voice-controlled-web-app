@@ -2,10 +2,16 @@
 import React, { useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { HomePage, Register, Login, DashboardPage } from "./pages";
+import {
+  HomePage,
+  Register,
+  Login,
+  DashboardPage,
+  TrialDashboardPage,
+  AdminDashboard,
+} from "./pages";
 import { checkIsLoggedIn } from "./redux/actionCreators/authActionCreator";
 import { RootState } from "./redux/store";
-import AdminDashboard from "./pages/DashboardPage/AdminDashboard";
 import CreateFile from "./components/DashboardComponents/CreateFile/CreateFile";
 
 const PrivateRoute = ({
@@ -35,6 +41,7 @@ const App: React.FC = () => {
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/trial/*" element={<TrialDashboardPage />} />
         <Route
           path="/dashboard/*"
           element={
