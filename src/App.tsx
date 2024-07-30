@@ -1,4 +1,4 @@
-// App.js
+import "regenerator-runtime/runtime";
 import React, { useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -12,7 +12,6 @@ import {
 } from "./pages";
 import { checkIsLoggedIn } from "./redux/actionCreators/authActionCreator";
 import { RootState } from "./redux/store";
-import CreateFile from "./components/DashboardComponents/CreateFile/CreateFile";
 
 const PrivateRoute = ({
   element,
@@ -61,7 +60,6 @@ const App: React.FC = () => {
             )
           }
         />
-        <Route path="/create-file" element={<CreateFile />} />
       </Routes>
     </div>
   );

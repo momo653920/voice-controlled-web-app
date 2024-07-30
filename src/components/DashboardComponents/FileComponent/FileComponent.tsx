@@ -8,38 +8,14 @@ import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { solarizedlight } from "react-syntax-highlighter/dist/esm/styles/prism";
 import debounce from "lodash.debounce";
 
-interface FileData {
-  data: string;
-  name: string;
-  url?: string;
-  extension?: string;
-}
-
-interface CurrentFile {
-  docId: string;
-  data: FileData;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-interface State {
-  filefolders: {
-    userFiles: CurrentFile[];
-  };
-}
-
-interface FileComponentProps {
-  fileName?: string;
-}
-
-const FileComponent: React.FC<FileComponentProps> = ({ fileName }) => {
-  const { fileId } = useParams<{ fileId: string }>();
-  const [fileData, setFileData] = useState<string>("");
-  const [prevFileData, setPrevFileData] = useState<string>("");
+const FileComponent = ({ fileName }) => {
+  const { fileId } = useParams();
+  const [fileData, setFileData] = useState("");
+  const [prevFileData, setPrevFileData] = useState("");
   const dispatch = useDispatch();
 
   const { currentFile } = useSelector(
-    (state: State) => ({
+    (state) => ({
       currentFile: state.filefolders.userFiles.find(
         (file) => file.docId === fileId
       ),
@@ -55,7 +31,7 @@ const FileComponent: React.FC<FileComponentProps> = ({ fileName }) => {
   }, [currentFile]);
 
   const debouncedUpdateFileData = useCallback(
-    debounce((fileId: string, data: string) => {
+    debounce((fileId, data) => {
       dispatch(updateFileData(fileId, data));
     }, 1000),
     [dispatch]

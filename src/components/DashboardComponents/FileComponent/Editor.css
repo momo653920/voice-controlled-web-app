@@ -2,33 +2,67 @@ body,
 html {
     height: 100%;
     font-family: Arial, sans-serif;
-    background-color: #f0f0f0; /* Light gray background color for the whole page */
+    background-color: #f0f0f0;
     overflow: hidden;
 }
 
-
 .editor-container {
-  padding:1em;
-  width: 100%; /* Adjust width as needed */
-    background-color: rgb(236, 236, 236); /* White background for the editor */
-    position: relative; /* Ensure positioning context for child elements */
+    padding: 1em;
+    width: 100%;
+    background-color: rgb(236, 236, 236);
+    position: relative;
     overflow: hidden;
-    
 }
 
 .ql-editor {
-  background-color: white; /* White background for the editor */
-  margin-left: 20%; /* Adjust the margin to center content */
-  margin-right: 20%; /* Adjust the margin to center content */
-  min-height: 85vh; /* Minimum height of the editor area */
-  max-height: 85vh; /* Maximum height of the editor area */
-  font-size: 1.2em; /* Larger text size */
-  padding: 4em; /* Padding inside the editor */
-  padding-left: 5%;
-  padding-right: 5%;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Shadow for the editor */
-  text-align: justify; /* Justify text */
-  text-justify: inter-word; /* Adjust for inter-word spacing */
-  scroll-behavior: smooth;
-  cursor: text; /* Set cursor to text */
+    background-color: white;
+    margin-left: 20%;
+    margin-right: 20%;
+    min-height: 80vh;
+    max-height: 80vh;
+    font-size: 1.2em;
+    padding: 4em;
+    padding-left: 5%;
+    padding-right: 5%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: justify;
+    text-justify: inter-word;
+    scroll-behavior: smooth;
+    cursor: text;
+}
+
+.mode-indicator-container {
+    margin-bottom: 10px;
+}
+
+.command-mode {
+    border: 2px solid red;
+    background-color: #ffe0e0;
+}
+
+.text-mode {
+    border: 2px solid green;
+    background-color: #e0ffe0;
+}
+
+.mode-indicator {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    padding: 10px;
+    background-color: #000;
+    color: #fff;
+    font-size: 16px;
+    z-index: 1000;
+}
+
+.transcript-display {
+    position: fixed;
+    top: 0;
+    right: 0;
+    padding: 10px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
 }

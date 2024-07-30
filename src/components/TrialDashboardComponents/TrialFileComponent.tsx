@@ -35,7 +35,6 @@ const TrialFileComponent: React.FC = () => {
       return file;
     });
     setCookie("files", JSON.stringify(updatedFiles));
-    console.log("File data saved:", fileId, data);
   };
 
   const debouncedUpdateFileData = useCallback(
