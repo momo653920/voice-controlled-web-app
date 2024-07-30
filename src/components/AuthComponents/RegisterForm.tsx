@@ -25,7 +25,6 @@ const RegisterForm = () => {
       setError("Passwords do not match");
       return;
     }
-    // Add more validation if needed
     dispatch(
       signUpUser(name, email, password, setLoading, setError, setSuccessMessage)
     );

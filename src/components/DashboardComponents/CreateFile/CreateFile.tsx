@@ -82,12 +82,12 @@ const CreateFile = ({ setIsCreateFileModalOpen }) => {
 
     try {
       await dispatch(createFile(data, setSuccess));
-      setIsCreateFileModalOpen(false); // Close modal on success
+      setIsCreateFileModalOpen(false);
     } catch (error) {
       console.error("Error creating file:", error);
       setError("Failed to create file. Please try again.");
     } finally {
-      setIsLoading(false); // Reset loading state
+      setIsLoading(false);
     }
   };
 

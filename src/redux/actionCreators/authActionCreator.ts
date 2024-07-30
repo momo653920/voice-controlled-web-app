@@ -154,7 +154,6 @@ export const checkIsLoggedIn = () => (dispatch: (action: any) => void) => {
         })
       );
     } else {
-      console.log("No user authenticated");
       dispatch(logoutUser());
     }
   });

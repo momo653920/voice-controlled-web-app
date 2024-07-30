@@ -19,7 +19,6 @@ const LoginForm = () => {
       setError("Please fill all the fields");
       return;
     }
-    // Add more validation if needed
     dispatch(
       signInUser(email, password, setLoading, setError, setSuccessMessage)
     );

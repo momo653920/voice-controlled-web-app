@@ -11,9 +11,9 @@ const Register = () => {
         <div className="row">
           <div className="col-md-6 mx-auto mt-5">
             <RegisterForm />
-            Already a member?
-            <Link to="/login" className="text-end">
-              Login
+
+            <Link to="/login" className="d-block text-end">
+              Already a member? Login
             </Link>
           </div>
         </div>
