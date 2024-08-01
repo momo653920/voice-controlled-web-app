@@ -25,7 +25,7 @@ const TrialShowItems: React.FC = () => {
 
   useEffect(() => {
     const files = JSON.parse(getCookie("files") || "[]").map((file: any) => ({
-      docId: file.id, // Use the actual file ID from the cookie
+      docId: file.id,
       data: file,
     }));
     setItems(files);
@@ -66,7 +66,6 @@ const TrialShowItems: React.FC = () => {
       setCookie("files", JSON.stringify(updatedFiles));
       setConfirmModalOpen(false);
       setItemToDelete(null);
-      // Update state after deletion to reflect changes
       setItems(items.filter((item) => item.docId !== itemToDelete));
     }
   };
@@ -142,5 +141,6 @@ const TrialShowItems: React.FC = () => {
     </div>
   );
 };
+
 
 export default TrialShowItems;

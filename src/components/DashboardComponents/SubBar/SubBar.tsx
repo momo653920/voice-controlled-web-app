@@ -1,4 +1,4 @@
-import "./SubBar.css";
+import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faFileAlt,
@@ -10,11 +10,18 @@ import { useNavigate } from "react-router-dom";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { changeFolder } from "../../../redux/actionCreators/fileFoldersActionCreator";
 
-const SubBar = ({
+interface SubBarProps {
+  setIsCreateFolderModalOpen: (open: boolean) => void;
+  setIsCreateFileModalOpen: (open: boolean) => void;
+  setIsFileUploadModalOpen: (open: boolean) => void;
+}
+
+const SubBar: React.FC<SubBarProps> = ({
   setIsCreateFolderModalOpen,
   setIsCreateFileModalOpen,
   setIsFileUploadModalOpen,
 }) => {
+  // Ensure all props are correctly used and check for errors
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { currentFolder, currentFolderData, userFolders } = useSelector(
@@ -28,7 +35,7 @@ const SubBar = ({
     shallowEqual
   );
 
-  const handleNavigate = (link, id) => {
+  const handleNavigate = (link: string, id: string) => {
     navigate(link);
     dispatch(changeFolder(id));
   };

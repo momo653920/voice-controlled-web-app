@@ -1,7 +1,6 @@
 import * as types from "../actionTypes/authActionTypes";
 import fire from "../../config/firebase";
 
-// TypeScript interfaces for better type safety
 interface User {
   uid: string;
   email: string | null;
@@ -140,21 +139,29 @@ export const signOutUser = () => async (dispatch: (action: any) => void) => {
   }
 };
 
-export const checkIsLoggedIn = () => (dispatch: (action: any) => void) => {
-  fire.auth().onAuthStateChanged(async (user) => {
-    if (user) {
-      const role = await fetchUserRole(user.uid);
-
-      dispatch(
-        loginUser({
-          uid: user.uid,
-          email: user.email,
-          displayName: user.displayName,
-          role: role,
-        })
-      );
-    } else {
-      dispatch(logoutUser());
-    }
-  });
-};
+export const checkIsLoggedIn =
+  () => async (dispatch: (action: any) => void) => {
+    return new Promise<void>((resolve) => {
+      fire.auth().onAuthStateChanged(async (user) => {
+        if (user) {
+          try {
+            const role = await fetchUserRole(user.uid);
+            dispatch(
+              loginUser({
+                uid: user.uid,
+                email: user.email,
+                displayName: user.displayName,
+                role: role,
+              })
+            );
+          } catch (error) {
+            console.error("Error fetching user role:", error);
+            dispatch(logoutUser());
+          }
+        } else {
+          dispatch(logoutUser());
+        }
+        resolve();
+      });
+    });
+  };

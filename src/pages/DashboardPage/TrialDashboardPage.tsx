@@ -1,13 +1,27 @@
-import React, { useState } from "react";
-import { useLocation, Route, Routes } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Route, Routes, useLocation } from "react-router-dom";
 import Navbar from "../../components/DashboardComponents/NavBar/Navbar";
 import TrialCreateFile from "../../components/TrialDashboardComponents/TrialCreateFile";
 import TrialHomeComponent from "../../components/TrialDashboardComponents/TrialHomeComponent";
 import TrialFileComponent from "../../components/TrialDashboardComponents/TrialFileComponent";
 
-const TrialDashboardPage: React.FC = () => {
-  const [isCreateFileModalOpen, setIsCreateFileModalOpen] = useState(false);
+interface Props {
+  isCreateFileModalOpen: boolean;
+  setIsCreateFileModalOpen: (open: boolean) => void;
+  setIsTrial: (isTrial: boolean) => void;
+}
+
+const TrialDashboardPage: React.FC<Props> = ({
+  isCreateFileModalOpen,
+  setIsCreateFileModalOpen,
+  setIsTrial,
+}) => {
   const { pathname } = useLocation();
+
+  useEffect(() => {
+    setIsTrial(true);
+    return () => setIsTrial(false);
+  }, [setIsTrial]);
 
   const showSubBar = !pathname.includes("/file/");
 

@@ -5,12 +5,14 @@ interface AuthState {
   isAuthenticated: boolean;
   user: any | null;
   role: string;
+  userId: string | null;
 }
 
 const initialState: AuthState = {
   isAuthenticated: false,
   user: null,
   role: "user",
+  userId: null,
 };
 
 const authReducer = (
@@ -21,6 +23,7 @@ const authReducer = (
     case types.SIGN_IN:
       return {
         ...state,
+        userId: action.payload.userId,
         isAuthenticated: true,
         user: action.payload,
         role: action.payload.role || "user",

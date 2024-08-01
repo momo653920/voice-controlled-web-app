@@ -74,6 +74,20 @@ const FileFoldersReducer = (
           (file) => file.docId !== action.payload
         ),
       };
+    case types.FETCH_FILE_BY_NAME_SUCCESS:
+      return {
+        ...state,
+        files: state.files.map((file) =>
+          file.docId === action.payload.docId ? action.payload.data : file
+        ),
+      };
+    case types.FETCH_FOLDER_BY_ID_SUCCESS:
+      return {
+        ...state,
+        folders: state.folders.map((folder) =>
+          folder.docId === action.payload.docId ? action.payload.data : folder
+        ),
+      };
     default:
       return state;
   }

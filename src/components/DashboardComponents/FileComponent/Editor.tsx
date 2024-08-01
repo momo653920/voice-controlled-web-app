@@ -7,7 +7,8 @@ import {
   startListening,
   stopListening,
   debouncedProcessTranscript,
-} from "../../../voice/TexxtEditorVoiceControl/speechRecognition";
+} from "../../../voice/Editor/speechRecognition";
+import SpeechBubble from "../../SpeechBubbleComponent/speechBubble";
 
 const modules = {
   toolbar: [
@@ -42,36 +43,25 @@ const Editor: React.FC<{ data: string; setData: (data: string) => void }> = ({
 
   useEffect(() => {
     const setupRecognition = () => {
-      try {
-        const speechRecognition = initSpeechRecognition(
-          (transcript: string) => {
-            debouncedProcessTranscript(
-              transcript,
-              setData,
-              isCommandMode,
-              setIsCommandMode,
-              editorRef
-            );
-            if (isCommandMode) {
-              setTranscript(transcript); 
-            }
-          }
+      const speechRecognition = initSpeechRecognition((transcript: string) => {
+        debouncedProcessTranscript(
+          transcript,
+          setData,
+          isCommandMode,
+          setIsCommandMode,
+          editorRef
         );
+        setTranscript(transcript);
+      });
 
-        recognitionRef.current = speechRecognition;
-        startListening(speechRecognition);
+      recognitionRef.current = speechRecognition;
+      startListening(speechRecognition);
 
-        return () => {
-          if (recognitionRef.current) {
-            stopListening(recognitionRef.current);
-          }
-        };
-      } catch (error) {
-        console.error(
-          "SpeechRecognition initialization error: ",
-          error.message
-        );
-      }
+      return () => {
+        if (recognitionRef.current) {
+          stopListening(recognitionRef.current);
+        }
+      };
     };
 
     setupRecognition();
@@ -104,14 +94,10 @@ const Editor: React.FC<{ data: string; setData: (data: string) => void }> = ({
           formats={formats}
         />
       </div>
-      {isCommandMode && (
-        <div className="transcript-display">
-          <p>Transcript: {transcript}</p>
-        </div>
-      )}
       <div className="mode-indicator">
         {isCommandMode ? "Command Mode" : "Text Mode"}
       </div>
+      <SpeechBubble text={transcript} />
     </div>
   );
 };

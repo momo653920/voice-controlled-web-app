@@ -1,7 +1,7 @@
 import fire from "../../config/firebase";
 import * as types from "../actionTypes/userActionTypes";
+import { getAuth, sendPasswordResetEmail } from "firebase/auth";
 
-// Fetch all users from Firebase Firestore
 export const fetchUsers = () => async (dispatch) => {
   dispatch({ type: types.FETCH_USERS_REQUEST });
 
@@ -18,7 +18,6 @@ export const fetchUsers = () => async (dispatch) => {
   }
 };
 
-// Action to activate or deactivate a user
 export const updateUserStatus = (userId, status) => async (dispatch) => {
   try {
     await fire
@@ -26,8 +25,27 @@ export const updateUserStatus = (userId, status) => async (dispatch) => {
       .collection("users")
       .doc(userId)
       .update({ active: status });
-    dispatch(fetchUsers()); // Refresh the user list
+    dispatch(fetchUsers());
   } catch (error) {
     console.error("Error updating user status:", error);
+  }
+};
+
+export const resetPassword = (email) => async () => {
+  const auth = getAuth();
+  try {
+    await sendPasswordResetEmail(auth, email);
+    console.log("Password reset email sent");
+  } catch (error) {
+    console.error("Error sending password reset email:", error);
+  }
+};
+
+export const deleteUserAccount = (userId) => async (dispatch) => {
+  try {
+    await fire.firestore().collection("users").doc(userId).delete();
+    dispatch(fetchUsers());
+  } catch (error) {
+    console.error("Error deleting user:", error);
   }
 };

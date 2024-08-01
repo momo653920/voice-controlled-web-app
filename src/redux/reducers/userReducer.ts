@@ -1,18 +1,12 @@
 import * as types from "../actionTypes/userActionTypes";
 
-interface UserState {
-  users: any[];
-  loading: boolean;
-  error: string | null;
-}
-
-const initialState: UserState = {
+const initialState = {
   users: [],
   loading: false,
   error: null,
 };
 
-const userReducer = (state = initialState, action: any) => {
+const userReducer = (state = initialState, action) => {
   switch (action.type) {
     case types.FETCH_USERS_REQUEST:
       return { ...state, loading: true };

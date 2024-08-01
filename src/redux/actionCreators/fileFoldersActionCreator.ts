@@ -262,3 +262,71 @@ export const deleteFile =
       console.error("Error deleting file:", error);
     }
   };
+interface FetchFileByNameAction {
+  type: typeof types.FETCH_FILE_BY_NAME_SUCCESS;
+  payload: { data: any; docId: string };
+}
+
+export const fetchFileByName =
+  (fileName: string) => async (dispatch: Dispatch) => {
+    try {
+      const filesSnapshot = await fire
+        .firestore()
+        .collection("files")
+        .where("name", "==", fileName)
+        .limit(1)
+        .get();
+
+      if (!filesSnapshot.empty) {
+        const fileDoc = filesSnapshot.docs[0];
+        const fileData = fileDoc.data();
+        const docId = fileDoc.id;
+
+        dispatch({
+          type: types.FETCH_FILE_BY_NAME_SUCCESS,
+          payload: { data: fileData, docId },
+        });
+
+        return docId;
+      } else {
+        console.error("File not found");
+        return null;
+      }
+    } catch (error) {
+      console.error("Error fetching file by name:", error);
+      return null;
+    }
+  };
+interface FetchFolderByIdAction {
+  type: typeof types.FETCH_FOLDER_BY_ID_SUCCESS;
+  payload: { data: any; docId: string };
+}
+
+export const fetchFolderById =
+  (folderId: string) => async (dispatch: Dispatch) => {
+    try {
+      const folderDoc = await fire
+        .firestore()
+        .collection("folders")
+        .doc(folderId)
+        .get();
+
+      if (folderDoc.exists) {
+        const folderData = folderDoc.data();
+        const docId = folderDoc.id;
+
+        dispatch({
+          type: types.FETCH_FOLDER_BY_ID_SUCCESS,
+          payload: { data: folderData, docId },
+        });
+
+        return docId;
+      } else {
+        console.error("Folder not found");
+        return null;
+      }
+    } catch (error) {
+      console.error("Error fetching folder by ID:", error);
+      return null;
+    }
+  };

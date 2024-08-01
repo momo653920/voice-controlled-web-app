@@ -1,48 +1,34 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  fetchUsers,
   updateUserStatus,
+  resetPassword,
+  deleteUserAccount,
+  fetchUsers,
 } from "../../redux/actionCreators/userActionCreator";
 import { RootState } from "../../redux/store";
-import { getFunctions, httpsCallable } from "firebase/functions";
 import { NavigationComponent } from "../../components/HomePageComponents";
 
 const AdminDashboard: React.FC = () => {
   const dispatch = useDispatch();
-  const { users, loading, error } = useSelector((state: RootState) => state.user);
+  const { users, loading, error } = useSelector(
+    (state: RootState) => state.user
+  );
 
   useEffect(() => {
     dispatch(fetchUsers());
   }, [dispatch]);
 
   const handleStatusChange = (userId: string, active: boolean) => {
-    const functions = getFunctions();
-    const callableFunction = active
-      ? httpsCallable(functions, "enableUser")
-      : httpsCallable(functions, "disableUser");
-
-    callableFunction({ uid: userId })
-      .then(() => dispatch(fetchUsers()))
-      .catch((error) => console.error("Error updating user status:", error));
+    dispatch(updateUserStatus(userId, !active)); // Toggle the status
   };
 
   const handlePasswordReset = (email: string) => {
-    const functions = getFunctions();
-    const resetPassword = httpsCallable(functions, "resetPassword");
-
-    resetPassword({ email })
-      .then((result) => console.log("Password reset link:", result.data.resetLink))
-      .catch((error) => console.error("Error resetting password:", error));
+    dispatch(resetPassword(email));
   };
 
   const handleDeleteUser = (userId: string) => {
-    const functions = getFunctions();
-    const deleteUser = httpsCallable(functions, "deleteUser");
-
-    deleteUser({ uid: userId })
-      .then(() => dispatch(fetchUsers()))
-      .catch((error) => console.error("Error deleting user:", error));
+    dispatch(deleteUserAccount(userId));
   };
 
   if (loading) return <p>Loading...</p>;

@@ -1,6 +1,7 @@
 import debounce from "lodash.debounce";
 import handleVoiceCommand from "./voiceCommands";
 import punctuationMappings from "./punctuationMappings.json";
+import ReactQuill from "react-quill";
 
 const getPunctuation = (word: string) => {
   return punctuationMappings[word.toLowerCase()] || word;
@@ -118,7 +119,6 @@ const processTranscript = (
     "gi"
   );
 
-  // Replace punctuation words with actual punctuation marks
   const cleanedTranscript = trimmedTranscript.replace(
     punctuationRegex,
     (matched) => punctuationMappings[matched.toLowerCase()]
@@ -142,8 +142,8 @@ const processTranscript = (
     return;
   } else {
     let updatedText = cleanedTranscript
-      .replace(/\s*([,.!?])/g, "$1") // Ensure no space before punctuation
-      .replace(/(?:^|\.\s+)([a-z])/g, (match) => match.toUpperCase()); // Capitalize after period
+      .replace(/\s*([,.!?])/g, "$1")
+      .replace(/(?:^|\.\s+)([a-z])/g, (match) => match.toUpperCase());
 
     const editor = editorRef.current?.getEditor();
     if (!editor) return;
