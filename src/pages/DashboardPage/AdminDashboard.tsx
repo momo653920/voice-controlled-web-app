@@ -1,12 +1,11 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  updateUserStatus,
-  resetPassword,
-  deleteUserAccount,
   fetchUsers,
+  updateUserStatus,
 } from "../../redux/actionCreators/userActionCreator";
 import { RootState } from "../../redux/store";
+import { getFunctions, httpsCallable } from "firebase/functions";
 import { NavigationComponent } from "../../components/HomePageComponents";
 
 const AdminDashboard: React.FC = () => {
@@ -20,15 +19,34 @@ const AdminDashboard: React.FC = () => {
   }, [dispatch]);
 
   const handleStatusChange = (userId: string, active: boolean) => {
-    dispatch(updateUserStatus(userId, !active)); // Toggle the status
+    const functions = getFunctions();
+    const callableFunction = active
+      ? httpsCallable(functions, "enableUser")
+      : httpsCallable(functions, "disableUser");
+
+    callableFunction({ uid: userId })
+      .then(() => dispatch(fetchUsers()))
+      .catch((error) => console.error("Error updating user status:", error));
   };
 
   const handlePasswordReset = (email: string) => {
-    dispatch(resetPassword(email));
+    const functions = getFunctions();
+    const resetPassword = httpsCallable(functions, "resetPassword");
+
+    resetPassword({ email })
+      .then((result) =>
+        console.log("Password reset link:", result.data.resetLink)
+      )
+      .catch((error) => console.error("Error resetting password:", error));
   };
 
   const handleDeleteUser = (userId: string) => {
-    dispatch(deleteUserAccount(userId));
+    const functions = getFunctions();
+    const deleteUser = httpsCallable(functions, "deleteUser");
+
+    deleteUser({ uid: userId })
+      .then(() => dispatch(fetchUsers()))
+      .catch((error) => console.error("Error deleting user:", error));
   };
 
   if (loading) return <p>Loading...</p>;
