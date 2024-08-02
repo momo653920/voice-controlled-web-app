@@ -1,12 +1,13 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   fetchUsers,
   updateUserStatus,
+  resetUserPassword,
 } from "../../redux/actionCreators/userActionCreator";
 import { RootState } from "../../redux/store";
-import { getFunctions, httpsCallable } from "firebase/functions";
-import { NavigationComponent } from "../../components/HomePageComponents";
+import "./AdminDashboard.css";
+import Navbar from "../../components/HomePageComponents/Navigation";
 
 const AdminDashboard: React.FC = () => {
   const dispatch = useDispatch();
@@ -14,90 +15,101 @@ const AdminDashboard: React.FC = () => {
     (state: RootState) => state.user
   );
 
+  const [resetEmail, setResetEmail] = useState("");
+  const [resetLoading, setResetLoading] = useState(false);
+  const [resetError, setResetError] = useState("");
+  const [resetSuccessMessage, setResetSuccessMessage] = useState("");
+  const [showResetModal, setShowResetModal] = useState(false);
+
   useEffect(() => {
     dispatch(fetchUsers());
   }, [dispatch]);
 
-  const handleStatusChange = (userId: string, active: boolean) => {
-    const functions = getFunctions();
-    const callableFunction = active
-      ? httpsCallable(functions, "enableUser")
-      : httpsCallable(functions, "disableUser");
-
-    callableFunction({ uid: userId })
-      .then(() => dispatch(fetchUsers()))
-      .catch((error) => console.error("Error updating user status:", error));
+  const handleUserStatusToggle = (userId: string, isActive: boolean) => {
+    dispatch(updateUserStatus(userId, !isActive));
   };
 
-  const handlePasswordReset = (email: string) => {
-    const functions = getFunctions();
-    const resetPassword = httpsCallable(functions, "resetPassword");
+  const handleResetPassword = (email: string) => {
+    setResetEmail(email);
+    setShowResetModal(true);
+  };
 
-    resetPassword({ email })
-      .then((result) =>
-        console.log("Password reset link:", result.data.resetLink)
+  const submitResetPassword = () => {
+    dispatch(
+      resetUserPassword(
+        resetEmail,
+        setResetLoading,
+        setResetError,
+        setResetSuccessMessage
       )
-      .catch((error) => console.error("Error resetting password:", error));
+    );
   };
-
-  const handleDeleteUser = (userId: string) => {
-    const functions = getFunctions();
-    const deleteUser = httpsCallable(functions, "deleteUser");
-
-    deleteUser({ uid: userId })
-      .then(() => dispatch(fetchUsers()))
-      .catch((error) => console.error("Error deleting user:", error));
-  };
-
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error}</p>;
 
   return (
-    <div>
-      <NavigationComponent />
-      <h1>Admin Dashboard</h1>
-      <table className="table">
-        <thead>
-          <tr>
-            <th>UID</th>
-            <th>Email</th>
-            <th>Name</th>
-            <th>Status</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {users.map((user) => (
-            <tr key={user.id}>
-              <td>{user.id}</td>
-              <td>{user.email}</td>
-              <td>{user.displayName}</td>
-              <td>{user.active ? "Active" : "Inactive"}</td>
-              <td>
-                <button
-                  className={`btn ${user.active ? "btn-danger" : "btn-success"}`}
-                  onClick={() => handleStatusChange(user.id, user.active)}
-                >
-                  {user.active ? "Deactivate" : "Activate"}
-                </button>
-                <button
-                  className="btn btn-warning ms-2"
-                  onClick={() => handlePasswordReset(user.email!)}
-                >
-                  Reset Password
-                </button>
-                <button
-                  className="btn btn-danger ms-2"
-                  onClick={() => handleDeleteUser(user.id)}
-                >
-                  Delete
-                </button>
-              </td>
+    <>
+      <div>
+        <Navbar />
+      </div>
+      <div className="admin-dashboard">
+        <h1>Admin Dashboard</h1>
+        {loading && <p>Loading users...</p>}
+        {error && <p>Error: {error}</p>}
+        <table className="table">
+          <thead>
+            <tr>
+              <th>UID</th>
+              <th>Email</th>
+              <th>Name</th>
+              <th>Status</th>
+              <th>Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+          </thead>
+          <tbody>
+            {users &&
+              users.map((user) => (
+                <tr key={user.id}>
+                  <td>{user.id}</td>
+                  <td>{user.email}</td>
+                  <td>{user.displayName}</td>
+                  <td>{user.active ? "Active" : "Inactive"}</td>
+                  <td>
+                    <button
+                      className={`btn ${user.active ? "btn-danger" : "btn-success"}`}
+                      onClick={() =>
+                        handleUserStatusToggle(user.id, user.active)
+                      }
+                    >
+                      {user.active ? "Deactivate" : "Activate"}
+                    </button>
+                    <button
+                      className="btn btn-warning ms-2"
+                      onClick={() => handleResetPassword(user.email)}
+                    >
+                      Reset Password
+                    </button>
+                  </td>
+                </tr>
+              ))}
+          </tbody>
+        </table>
+
+        {showResetModal && (
+          <div className="modal">
+            <div className="modal-content">
+              <h3>Reset Password for {resetEmail}</h3>
+              <button onClick={submitResetPassword} disabled={resetLoading}>
+                {resetLoading ? "Sending..." : "Send Password Reset Email"}
+              </button>
+              <button onClick={() => setShowResetModal(false)}>Close</button>
+              {resetError && <p className="error-text">{resetError}</p>}
+              {resetSuccessMessage && (
+                <p className="success-text">{resetSuccessMessage}</p>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+    </>
   );
 };
 

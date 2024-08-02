@@ -55,6 +55,23 @@ export const signInUser =
       const user = userCredential.user;
       if (!user) throw new Error("No user found");
 
+      // Fetch user document from Firestore to check active status
+      const userDoc = await fire
+        .firestore()
+        .collection("users")
+        .doc(user.uid)
+        .get();
+      if (!userDoc.exists) {
+        throw new Error("User document not found");
+      }
+
+      const userData = userDoc.data();
+      if (!userData?.active) {
+        // Sign out the user immediately
+        await fire.auth().signOut();
+        throw new Error("User account is disabled");
+      }
+
       const role = await fetchUserRole(user.uid);
 
       dispatch(
@@ -73,7 +90,11 @@ export const signInUser =
       }
     } catch (error) {
       setLoading(false);
-      setError("Invalid Email or Password");
+      if (error.message === "User account is disabled") {
+        setError("Your account is disabled. Please contact support.");
+      } else {
+        setError("Invalid Email or Password");
+      }
       console.error("Error signing in:", error);
     }
   };
@@ -98,11 +119,19 @@ export const signUpUser =
 
       await user.updateProfile({ displayName: name });
 
+      await fire.firestore().collection("users").doc(user.uid).set({
+        email: user.email,
+        displayName: user.displayName,
+        role: "user",
+        active: true,
+      });
+
       dispatch(
         loginUser({
           uid: user.uid,
           email: user.email,
           displayName: user.displayName,
+          role: "user",
         })
       );
 
