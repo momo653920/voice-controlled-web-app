@@ -1,8 +1,14 @@
-import "./SubBar.css";
+import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFileAlt } from "@fortawesome/free-solid-svg-icons";
 
-const TrialSubBar = ({ setIsCreateFileModalOpen }) => {
+interface TrialSubBarProps {
+  setIsCreateFileModalOpen: (open: boolean) => void;
+}
+
+const TrialSubBar: React.FC<TrialSubBarProps> = ({
+  setIsCreateFileModalOpen,
+}) => {
   return (
     <nav className="navbar navbar-expand-lg mt-3 navbar-light bg-white py-2">
       <ul className="navbar-nav ms-auto me-5">

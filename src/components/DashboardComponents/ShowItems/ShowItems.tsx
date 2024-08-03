@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, MouseEvent } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faFolder,
@@ -100,73 +100,44 @@ const ShowItems: React.FC<ShowItemsProps> = ({ title, items = [], type }) => {
   };
 
   const getFileIcon = (extension: string | undefined) => {
-    switch (extension?.toLowerCase()) {
-      case "pdf":
-        return (
-          <FontAwesomeIcon icon={faFilePdf} size="4x" className="item-icon" />
-        );
-      case "jpg":
-      case "jpeg":
-      case "png":
-      case "gif":
-        return (
-          <FontAwesomeIcon icon={faFileImage} size="4x" className="item-icon" />
-        );
-      case "doc":
-      case "docx":
-        return (
-          <FontAwesomeIcon icon={faFileWord} size="4x" className="item-icon" />
-        );
-      case "xls":
-      case "xlsx":
-        return (
-          <FontAwesomeIcon icon={faFileExcel} size="4x" className="item-icon" />
-        );
-      case "ppt":
-      case "pptx":
-        return (
-          <FontAwesomeIcon
-            icon={faFilePowerpoint}
-            size="4x"
-            className="item-icon"
-          />
-        );
-      case "mp4":
-      case "mkv":
-      case "avi":
-        return (
-          <FontAwesomeIcon icon={faFileVideo} size="4x" className="item-icon" />
-        );
-      case "mp3":
-      case "wav":
-        return (
-          <FontAwesomeIcon icon={faFileAudio} size="4x" className="item-icon" />
-        );
-      case "html":
-      case "css":
-      case "js":
-      case "json":
-        return (
-          <FontAwesomeIcon icon={faFileCode} size="4x" className="item-icon" />
-        );
-      case "txt":
-        return (
-          <FontAwesomeIcon icon={faFileText} size="4x" className="item-icon" />
-        );
-      default:
-        return (
-          <FontAwesomeIcon icon={faFileAlt} size="4x" className="item-icon" />
-        );
-    }
+    const fileTypeIcons = {
+      pdf: faFilePdf,
+      jpg: faFileImage,
+      jpeg: faFileImage,
+      png: faFileImage,
+      gif: faFileImage,
+      doc: faFileWord,
+      docx: faFileWord,
+      xls: faFileExcel,
+      xlsx: faFileExcel,
+      ppt: faFilePowerpoint,
+      pptx: faFilePowerpoint,
+      mp4: faFileVideo,
+      mkv: faFileVideo,
+      avi: faFileVideo,
+      mp3: faFileAudio,
+      wav: faFileAudio,
+      html: faFileCode,
+      css: faFileCode,
+      js: faFileCode,
+      json: faFileCode,
+      txt: faFileText,
+    };
+
+    return (
+      <FontAwesomeIcon
+        icon={fileTypeIcons[extension?.toLowerCase()] || faFileAlt}
+        size="4x"
+        className="item-icon"
+      />
+    );
   };
 
   const handleDownload = async (url: string | undefined, fileName: string) => {
     if (url) {
       try {
         const response = await fetch(url);
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
+        if (!response.ok) throw new Error("Network response was not ok");
 
         const fileContent = await response.text();
         const blob = new Blob([fileContent], { type: "text/plain" });

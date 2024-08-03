@@ -2,13 +2,18 @@ import React, { useEffect, useState } from "react";
 import TrialShowItems from "./TrialShowItems";
 import { getCookie } from "./cookieUtils";
 
-const TrialHomeComponent = () => {
+const TrialHomeComponent: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
-  const [userFiles, setUserFiles] = useState([]);
+  const [userFiles, setUserFiles] = useState<any[]>([]);
 
   useEffect(() => {
-    const files = JSON.parse(getCookie("files") || "[]");
-    setUserFiles(files);
+    try {
+      const files = JSON.parse(getCookie("files") || "[]");
+      setUserFiles(files);
+    } catch (error) {
+      console.error("Error loading files:", error);
+      setUserFiles([]);
+    }
     setIsLoading(false);
   }, []);
 

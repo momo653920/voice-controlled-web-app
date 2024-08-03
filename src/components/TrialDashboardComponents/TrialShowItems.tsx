@@ -142,5 +142,4 @@ const TrialShowItems: React.FC = () => {
   );
 };
 
-
 export default TrialShowItems;

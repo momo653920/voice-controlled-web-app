@@ -3,12 +3,12 @@ import { faArrowLeftLong } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useNavigate } from "react-router-dom";
 
-interface TrialFileHeader {
+interface TrialFileHeaderProps {
   fileName: string;
   lastModified: Date;
 }
 
-const TrialFileHeader: React.FC<TrialFileHeader> = ({
+const TrialFileHeader: React.FC<TrialFileHeaderProps> = ({
   fileName,
   lastModified,
 }) => {
