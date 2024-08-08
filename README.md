@@ -34,7 +34,7 @@ How to run:
 1. Install Node.js
 You can do that by running 
 ```nvm install lts```
-nvm use lts
+```nvm use lts```
 Or directly download nad install Node.js from the official website https://nodejs.org/en
 
 2. Verify installation by running 
