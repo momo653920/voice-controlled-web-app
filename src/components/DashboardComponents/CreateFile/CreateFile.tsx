@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 const CreateFile = ({ setIsCreateFileModalOpen }) => {
   const [fileName, setFileName] = useState("");
   const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false); // State to manage loading state
   const [success, setSuccess] = useState(false);
 
   const { userFiles, user, currentFolder, currentFolderData } = useSelector(
