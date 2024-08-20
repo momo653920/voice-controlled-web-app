@@ -1,92 +1,106 @@
 body {
-    background-color: #f7f9fc;
-    font-family: Arial, sans-serif;
-  }
-  
-  .container {
-    text-align: center;
-    padding: 2rem 0;
-  }
-  
-  h1 {
-    color: #333;
-  }
-  
-  p {
-    color: #555;
-  }
-  
-  .options-container {
-    display: flex;
-    justify-content: center;
-    margin-top: 2rem;
-  }
-  
-  .option {
-    margin: 0 1rem;
-    padding: 2rem;
-    border: 1px solid #ddd;
-    border-radius: 12px;
-    width: 400px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    background-color: #fff;
-    transition: transform 0.3s, box-shadow 0.3s;
-  }
-  
-  .option:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-  }
-  
-  .option h2 {
-    margin-bottom: 1.5rem;
-    color: #007bff;
-  }
-  
-  .option .btn {
-    margin: 0.5rem 0;
-    width: 100%;
-    padding: 0.75rem;
-    font-size: 1rem;
-    border-radius: 8px;
-    transition: background-color 0.3s;
-  }
-  
-  .option .btn-primary {
-    background-color: #ce3a3a;
-    color: #fff;
-    border: none;
-  }
-  
-  .option .btn-primary:hover {
-    background-color: #c71e1e;
-  }
-  
-  .option .btn-secondary {
-    background-color: #0088ff;
-    color: #fff;
-    border: none;
-  }
-  
-  .option .btn-secondary:hover {
-    background-color: #5a6268;
-  }
-  
-  .description {
-    margin-top: 2rem;
-    padding: 2rem;
-    background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 12px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  .description h3 {
-    color: #007bff;
-    margin-bottom: 1rem;
-  }
-  
-  .description p {
-    color: #555;
-  }
-  
+  margin: 0;
+  padding: 0;
+  background-color: #f7f9fc;
+  font-family: Arial, sans-serif;
+}
+
+.home-page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.top-section {
+  background-color: black;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2rem;
+  flex: 1; /* Allows the top section to take the remaining space */
+}
+
+.top-section h1 {
+  margin: 0;
+  font-size: 3rem; /* Adjusted for visibility */
+}
+
+.top-section p {
+  font-size: 1.5rem; /* Adjusted for readability */
+  margin: 1rem 0;
+}
+
+.button-group {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.btn-primary { 
+  background-color: #00aaff;
+  color: white;
+  border: none;
+  padding: 1rem 2.5rem;
+  font-size: 1.2rem !important; 
+  border-radius: 8px;
+  cursor: pointer;
+  text-decoration: none;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-primary:hover {
+  background-color: #0099cc;
+}
+
+.arrow {
+  margin-left: 0.5rem;
+  font-size: 1.5rem;
+}
+
+.btn-secondary {
+  background-color: rgb(0, 0, 0) !important;
+  color: #007bff; 
+  border: 1px solid #007bff; 
+  padding: 1rem 2.5rem;
+  font-size: 1.2rem; 
+  border-radius: 8px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.btn-secondary:hover {
+  background-color: #007bff;
+  color: white;
+}
+
+.bottom-section {
+  background-color: white;
+  padding: 2rem;
+  flex: 1; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.description {
+  max-width: 800px;
+  text-align: center;
+  margin: 0 auto;
+}
+
+.description h3 {
+  color: #007bff;
+  margin-bottom: 1rem;
+  font-size: 2rem; 
+}
+
+.description p {
+  color: #555;
+  font-size: 1.2rem; 
+}

@@ -11,34 +11,40 @@ const handleVoiceCommand = (
   const selection = editor.getSelection();
   const selectedText = editor.getText(selection.index, selection.length);
 
-  if (command.includes("go back")) {
+  if (command.includes("назад")) {
     window.history.back();
     return;
   }
 
-  if (command.includes("select last sentence")) {
+  if (command.includes("маркирай последното изречение")) {
     const text = editor.getText();
     const lastSentenceStart = text.lastIndexOf(".", text.length - 2) + 1;
     const lastSentenceEnd = text.length - 1;
     editor.setSelection(lastSentenceStart, lastSentenceEnd - lastSentenceStart);
     return;
   }
-
-  if (command.includes("bold")) {
+  if (command.includes("маркирай последната дума")) {
+    const text = editor.getText();
+    const lastSentenceStart = text.lastIndexOf(" ", text.length - 2) + 1;
+    const lastSentenceEnd = text.length - 1;
+    editor.setSelection(lastSentenceStart, lastSentenceEnd - lastSentenceStart);
+    return;
+  }
+  if (command.includes("удебели")) {
     if (selectedText) {
       editor.format("bold", true, "user");
     }
     return;
   }
 
-  if (command.includes("italic")) {
+  if (command.includes("курсив")) {
     if (selectedText) {
       editor.format("italic", true, "user");
     }
     return;
   }
 
-  if (command.includes("delete")) {
+  if (command.includes("изтрий")) {
     if (selectedText) {
       editor.deleteText(selection.index, selection.length);
     } else {

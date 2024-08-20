@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import TrialShowItems from "./TrialShowItems";
 import { getCookie } from "./cookieUtils";
+import "../DashboardComponents/HomeComponent/HomeComponent.css";
 
 const TrialHomeComponent: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);

@@ -14,7 +14,7 @@ const initSpeechRecognition = (
   const recognition = new SpeechRecognition();
   recognition.continuous = true;
   recognition.interimResults = true;
-  recognition.lang = "en-US";
+  recognition.lang = "bg-BG";
 
   recognition.onresult = (event: SpeechRecognitionEvent) => {
     let finalTranscript = "";

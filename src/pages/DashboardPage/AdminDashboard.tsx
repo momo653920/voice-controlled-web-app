@@ -47,9 +47,7 @@ const AdminDashboard: React.FC = () => {
 
   return (
     <>
-      <div>
-        <Navbar />
-      </div>
+      <Navbar />
       <div className="admin-dashboard">
         <h1>Admin Dashboard</h1>
         {loading && <p>Loading users...</p>}

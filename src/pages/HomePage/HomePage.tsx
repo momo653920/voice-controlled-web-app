@@ -4,33 +4,35 @@ import "./HomePage.css";
 
 const HomePage = () => {
   return (
-    <div>
+    <div className="home-page">
       <NavigationComponent />
-      <div className="container">
-        <div className="options-container">
-          <div className="option">
-            <h2>Want to try for free?</h2>
-            <Link to="/trial">
-              <button className="btn btn-primary">Try for Free</button>
-            </Link>
-          </div>
-          <div className="option">
-            <h2>Want to Join Us?</h2>
+      <div className="top-section">
+        <div className="centered-content">
+          <h1>Опростете работата си!</h1>
+          <p>
+            Открийте как нашият инструмент може да ускори задачите ви. Опростете
+            работния си процес и се концентрирайте върху най-важното.
+          </p>
+          <div className="button-group">
             <Link to="/register">
-              <button className="btn btn-primary">Register</button>
+              <button className="btn btn-primary">
+                Регистрирайте се безплатно
+                <span className="arrow">→</span>
+              </button>
             </Link>
-            <Link to="/login">
-              <button className="btn btn-secondary">Login</button>
+            <Link to="/dashboard">
+              <button className="btn btn-secondary">Отидете на таблото</button>
             </Link>
           </div>
         </div>
+      </div>
+      <div className="bottom-section">
         <div className="description">
-          <h3>About the Project</h3>
+          <h3>За проекта</h3>
           <p>
-            Welcome to the React Voice Controlled File Management System. This
-            innovative application allows users to manage their files using
-            voice commands, providing a hands-free and efficient way to organize
-            and access documents.
+            Добре дошли в Jessica. Това иновационно приложение позволява на
+            потребителите да управляват файловете си чрез гласови команди,
+            предоставяйки ефективна форма на организация и достъп до документи.
           </p>
         </div>
       </div>

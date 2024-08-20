@@ -1,65 +1,75 @@
 .item-container {
-  width: 70%;
+  width: 100% !important;
+  background-color: #ffffff !important;
+  
 }
 
-.item-title {
-  margin: 1rem;
-  border-bottom: 1px solid #dee2e6;
-  padding: 10px 0;
+.item-row {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 2rem !important;
 }
 
 .item {
-  position: relative;
-  cursor: pointer;
-  width: calc(100% / 4 - 20px);
-  padding: 10px;
-  text-align: center;
-  border: 1px solid #ced4da;
-  transition: background-color 0.3s ease;
-  border-radius: 12px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  background-color: #fff;
-  margin: 5px;
+  position: relative !important;
+  cursor: pointer !important;
+  flex: 0 1 calc(25% - 10px) !important;
+  padding: 10px !important;
+  text-align: center !important;
+  border: 1px solid #ced4da !important;
+  border-radius: 12px !important;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1) !important;
+  background-color: #fff !important;
+  transition: background-color 0.3s ease !important;
 }
-
 
 .item-dots {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  cursor: pointer;
+  position: absolute !important;
+  top: 10px !important;
+  right: 10px !important;
+  cursor: pointer !important;
 }
+
 .item:hover {
-  background-color: #f1f1f1;
+  background-color: #f1f1f1 !important;
 }
+
 .dropdown-menu {
-  position: absolute;
-  top: 30px;
-  right: 10px;
-  background: white;
-  border: 1px solid #ccc;
-  display: none;
-  flex-direction: column;
-  z-index: 1000;
+  position: absolute !important;
+  top: 30px !important;
+  right: 10px !important;
+  background: white !important;
+  border: 1px solid #ccc !important;
+  display: none !important;
+  flex-direction: column !important;
+  z-index: 1000 !important;
 }
 
 .dropdown-menu.show {
-  display: flex;
+  display: flex !important;
 }
 
 .dropdown-item {
-  padding: 10px;
-  cursor: pointer;
+  padding: 10px !important;
+  cursor: pointer !important;
 }
 
 .dropdown-item:hover {
-  background: #f0f0f0;
+  background: #f0f0f0 !important;
 }
 
 .item-name.scrolling {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  width: 100%;
-  display: inline-block;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  width: 100% !important;
+  display: inline-block !important;
+}
+
+.items-count {
+  font-size: 0.9em !important;
+  color: #888 !important;
+}
+.item-title{
+  margin-left: 1rem;
 }

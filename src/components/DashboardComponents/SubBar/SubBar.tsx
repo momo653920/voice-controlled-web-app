@@ -1,15 +1,15 @@
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faFileAlt,
   faFileArrowUp,
-  faFolderPlus,
+  faPlus,
   faArrowLeft,
+  faFolderPlus,
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { changeFolder } from "../../../redux/actionCreators/fileFoldersActionCreator";
-
+import "./SubBar.css";
 interface SubBarProps {
   setIsCreateFolderModalOpen: (open: boolean) => void;
   setIsCreateFileModalOpen: (open: boolean) => void;
@@ -21,7 +21,6 @@ const SubBar: React.FC<SubBarProps> = ({
   setIsCreateFileModalOpen,
   setIsFileUploadModalOpen,
 }) => {
-  // Ensure all props are correctly used and check for errors
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { currentFolder, currentFolderData, userFolders } = useSelector(
@@ -59,86 +58,57 @@ const SubBar: React.FC<SubBarProps> = ({
   };
 
   return (
-    <nav className="navbar navbar-expand-lg mt-3 navbar-light bg-white py-2">
-      <nav className="ms-5" aria-label="breadcrumb">
-        <ol className="breadcrumb d-flex align-items-center">
-          {currentFolder !== "root" ? (
-            <>
+    <>
+      <nav className="navbar navbar-expand-lg mt-3 navbar-light bg-white py-2">
+        <div className="navbar-buttons ms-2">
+          <ul className="navbar-nav">
+            <li className="navbar-item">
               <button
-                onClick={() => handleNavigate("/dashboard", "root")}
-                className="breadcrumb-item btn btn-link"
+                className="btn btn-create-file navbar-button"
+                onClick={() => setIsCreateFileModalOpen(true)}
               >
-                Home
+                <FontAwesomeIcon icon={faPlus} className="icon" />
+                <span>Създай Файл</span>
               </button>
-              {currentFolderData?.data.path.map((folder, index) => (
+            </li>
+            <li className="navbar-item">
+              <button
+                className="btn btn-upload navbar-button"
+                onClick={() => setIsFileUploadModalOpen(true)}
+              >
+                <FontAwesomeIcon icon={faFileArrowUp} className="icon" />
+                <span>Качи Файл</span>
+              </button>
+            </li>
+            <li className="navbar-item">
+              <button
+                className="btn btn-create-folder navbar-button"
+                onClick={() => setIsCreateFolderModalOpen(true)}
+              >
+                <FontAwesomeIcon icon={faFolderPlus} className="icon" />
+                <span>Създай Папка</span>
+              </button>
+            </li>
+            {currentFolder !== "root" && (
+              <li className="navbar-item go-back-button">
                 <button
-                  key={index}
-                  className="breadcrumb-item btn btn-link"
-                  onClick={() =>
-                    handleNavigate(
-                      `/dashboard/folder/${userFolders.find((fldr) => folder === fldr.docId)?.docId}`,
-                      userFolders.find((fldr) => folder === fldr.docId)?.docId
-                    )
-                  }
+                  className="btn btn-outline-dark btn-lg navbar-button"
+                  onClick={handleBack}
                 >
-                  {userFolders.find((fldr) => folder === fldr.docId)?.data.name}
+                  <FontAwesomeIcon icon={faArrowLeft} className="icon" />
+                  <span>Назад</span>
                 </button>
-              ))}
-              <li className="breadcrumb-item active">
-                {currentFolderData?.data.name}
               </li>
-            </>
-          ) : (
-            <>
-              <li className="breadcrumb-item active" aria-current="page">
-                Home
-              </li>
-            </>
-          )}
-        </ol>
+            )}
+          </ul>
+        </div>
       </nav>
-
-      <ul className="navbar-nav ms-auto me-5">
-        {currentFolder !== "root" && (
-          <li className="navbar-item mx-2">
-            <button
-              className="btn btn-outline-dark btn-lg navbar-button"
-              onClick={handleBack}
-            >
-              <FontAwesomeIcon icon={faArrowLeft} />
-              &nbsp; Back
-            </button>
-          </li>
-        )}
-        <li className="navbar-item mx-2">
-          <button
-            className="btn btn-outline-dark btn-lg navbar-button"
-            onClick={() => setIsFileUploadModalOpen(true)}
-          >
-            <FontAwesomeIcon icon={faFileArrowUp} />
-            &nbsp; Upload File
-          </button>
-        </li>
-        <li className="navbar-item mx-2">
-          <button
-            className="btn btn-outline-dark btn-lg navbar-button"
-            onClick={() => setIsCreateFileModalOpen(true)}
-          >
-            <FontAwesomeIcon icon={faFileAlt} />
-            &nbsp; Create File
-          </button>
-        </li>
-        <li className="navbar-item ms-2">
-          <button
-            className="btn btn-outline-dark btn-lg navbar-button"
-            onClick={() => setIsCreateFolderModalOpen(true)}
-          >
-            <FontAwesomeIcon icon={faFolderPlus} />
-            &nbsp; Create Folder
-          </button>
-        </li>
-      </ul>
-    </nav>
+      <nav>
+        <div className="folder-name ms-2">
+          <span>{currentFolderData?.data.name || "Начало"}</span>
+        </div>
+      </nav>
+    </>
   );
 };
 

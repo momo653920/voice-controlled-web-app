@@ -3,14 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faFolder,
   faFileAlt,
-  faFilePdf,
   faFileImage,
-  faFileWord,
-  faFileExcel,
-  faFilePowerpoint,
-  faFileVideo,
-  faFileAudio,
-  faFileCode,
   faFileText,
   faEllipsisH,
 } from "@fortawesome/free-solid-svg-icons";
@@ -21,8 +14,8 @@ import {
   deleteFile,
   deleteFolder,
 } from "../../../redux/actionCreators/fileFoldersActionCreator";
-import "./ShowItems.css";
 import ConfirmationModal from "./ConfirmationModal";
+import "./ShowItems.css";
 
 interface ItemData {
   name: string;
@@ -62,6 +55,25 @@ const ShowItems: React.FC<ShowItemsProps> = ({ title, items = [], type }) => {
       document.removeEventListener("click", handleClickOutside);
     };
   }, []);
+  const getFileIcon = (extension: string | undefined) => {
+    switch (extension?.toLowerCase()) {
+      case "jpg":
+      case "jpeg":
+      case "png":
+      case "gif":
+        return (
+          <FontAwesomeIcon icon={faFileImage} size="4x" className="item-icon" />
+        );
+      case "txt":
+        return (
+          <FontAwesomeIcon icon={faFileText} size="4x" className="item-icon" />
+        );
+      default:
+        return (
+          <FontAwesomeIcon icon={faFileAlt} size="4x" className="item-icon" />
+        );
+    }
+  };
 
   const handleDoubleClick = (itemId: string) => {
     if (type === "folder") {
@@ -97,40 +109,6 @@ const ShowItems: React.FC<ShowItemsProps> = ({ title, items = [], type }) => {
   const cancelDelete = () => {
     setConfirmModalOpen(false);
     setItemToDelete(null);
-  };
-
-  const getFileIcon = (extension: string | undefined) => {
-    const fileTypeIcons = {
-      pdf: faFilePdf,
-      jpg: faFileImage,
-      jpeg: faFileImage,
-      png: faFileImage,
-      gif: faFileImage,
-      doc: faFileWord,
-      docx: faFileWord,
-      xls: faFileExcel,
-      xlsx: faFileExcel,
-      ppt: faFilePowerpoint,
-      pptx: faFilePowerpoint,
-      mp4: faFileVideo,
-      mkv: faFileVideo,
-      avi: faFileVideo,
-      mp3: faFileAudio,
-      wav: faFileAudio,
-      html: faFileCode,
-      css: faFileCode,
-      js: faFileCode,
-      json: faFileCode,
-      txt: faFileText,
-    };
-
-    return (
-      <FontAwesomeIcon
-        icon={fileTypeIcons[extension?.toLowerCase()] || faFileAlt}
-        size="4x"
-        className="item-icon"
-      />
-    );
   };
 
   const handleDownload = async (url: string | undefined, fileName: string) => {

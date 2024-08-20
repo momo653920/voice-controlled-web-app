@@ -65,7 +65,7 @@ const TrialCreateFile: React.FC<{
             />
           </div>
           <button type="submit" className="btn btn-primary mt-3 w-100">
-            Create File
+            Създай
           </button>
         </form>
       </div>

@@ -1,56 +1,41 @@
+import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
-import { signOutUser } from "../../redux/actionCreators/authActionCreator";
 import "./Navigation.css";
+import logo from "./logo.png";
 
-const NavigationComponent = () => {
-  const { isAuthenticated, user, role } = useSelector((state) => state.auth);
-  const dispatch = useDispatch();
+const NavigationComponent: React.FC = () => {
+  const location = useLocation();
+  const isAdminPage = location.pathname.includes("/admin");
 
   return (
-    <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
-      <Link className="navbar-brand" to="/">
-        Jessica
-      </Link>
+    <nav className="navbar navbar-expand-lg navbar-dark bg-black">
+      <div className="navbar-brand-container">
+        <img src={logo} alt="logo" className="navbar-logo" />
+        <Link className="navbar-brand" to="/">
+          Jessica
+        </Link>
+      </div>
 
       <ul className="navbar-nav ms-auto me-5">
-        {isAuthenticated ? (
+        {!isAdminPage && (
           <>
-            <li className="nav-item mx-2">
-              <p className="my-0 mt-1 mx-2">
-                <span className="text-light"> Welcome, </span>
-                <span className="text-warning"> {user.displayName} </span>
-              </p>
-            </li>
-
-            <li className="nav-item mx-2">
-              <Link className="btn btn-primary" to="/dashboard">
-                Dashboard
-              </Link>
-            </li>
-            <li className="nav-item">
-              <button
-                className="btn btn-success"
-                onClick={() => dispatch(signOutUser())}
-              >
-                Logout
-              </button>
-            </li>
-          </>
-        ) : (
-          <>
-            <li className="nav-item mx-2">
-              <Link className="btn btn-primary" to="/login">
-                Login
-              </Link>
-            </li>
             <li className="nav-item">
               <Link className="btn btn-success" to="/register">
-                Register
+                Регистрирай се
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link className="btn btn-primary" to="/login">
+                Влез
               </Link>
             </li>
           </>
         )}
+        <li className="nav-item">
+          <Link className="btn btn-info" to="/dashboard">
+            Табло
+          </Link>
+        </li>
       </ul>
     </nav>
   );

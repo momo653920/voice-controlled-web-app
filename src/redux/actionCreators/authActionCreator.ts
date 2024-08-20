@@ -20,7 +20,8 @@ const fetchUserRole = async (uid: string): Promise<string> => {
       .doc(uid)
       .get();
     if (adminUserDoc.exists) {
-      return adminUserDoc.data()?.role || "user";
+      const data = adminUserDoc.data();
+      return data?.role || "user";
     }
     return "user";
   } catch (error) {
@@ -55,7 +56,6 @@ export const signInUser =
       const user = userCredential.user;
       if (!user) throw new Error("No user found");
 
-      // Fetch user document from Firestore to check active status
       const userDoc = await fire
         .firestore()
         .collection("users")
@@ -67,7 +67,6 @@ export const signInUser =
 
       const userData = userDoc.data();
       if (!userData?.active) {
-        // Sign out the user immediately
         await fire.auth().signOut();
         throw new Error("User account is disabled");
       }
@@ -90,11 +89,7 @@ export const signInUser =
       }
     } catch (error) {
       setLoading(false);
-      if (error.message === "User account is disabled") {
-        setError("Your account is disabled. Please contact support.");
-      } else {
-        setError("Invalid Email or Password");
-      }
+      setError("Invalid Email or Password");
       console.error("Error signing in:", error);
     }
   };

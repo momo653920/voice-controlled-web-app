@@ -1,7 +1,10 @@
 import { Link, useLocation } from "react-router-dom";
-
 import { useSelector, useDispatch } from "react-redux";
 import { signOutUser } from "../../../redux/actionCreators/authActionCreator";
+import logo from "../../HomePageComponents/logo.png"; // Update the logo path if needed
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUserCircle } from "@fortawesome/free-solid-svg-icons";
+import "./Navbar.css"; // Ensure this path is correct
 
 const Navbar = () => {
   const { isAuthenticated, user, role } = useSelector((state) => state.auth);
@@ -9,53 +12,55 @@ const Navbar = () => {
   const location = useLocation();
 
   const adminButtonLink = location.pathname === "/admin" ? "/" : "/admin";
+
+  const handleSignOut = () => {
+    dispatch(signOutUser());
+  };
+
   return (
-    <nav className="navbar navbar-expand-lg navbar-white bg-white shadow-sm  ">
-      <Link className="navbar-brand text-black ms-5" to="/dashboard">
-        Jessica
-      </Link>
+    <nav className="custom-navbar navbar navbar-expand-lg shadow-sm">
+      <div className="custom-navbar-brand-container">
+        <Link className="custom-navbar-brand" to="/dashboard">
+          <img src={logo} alt="logo" className="custom-navbar-logo" />{" "}
+        </Link>
+      </div>
 
-      <ul className="navbar-nav ms-auto me-5">
-        {isAuthenticated ? (
-          <>
+      <ul className="custom-navbar-nav ms-auto">
+        <>
+          <li className="nav-item mx-2"></li>
+          {role === "admin" && (
             <li className="nav-item mx-2">
-              <p className="my-0 mt-2 mx-2">
-                <span className="text-dark"> Welcome, </span>
-                <span className="fw-bold"> {user.displayName} </span>
-              </p>
+              <Link className="btn btnUsers" to={adminButtonLink}>
+                {location.pathname === "/admin" ? "Начало" : "Потребители"}
+              </Link>
             </li>
-            {role === "admin" && (
-              <li className="nav-item mx-2">
-                <Link className="btn btn-danger" to={adminButtonLink}>
-                  {location.pathname === "/admin" ? "Home" : "Users"}
-                </Link>
+          )}
+          <li className="nav-item ms-auto dropdown">
+            <button
+              className="profile-icon"
+              type="button"
+              id="profileDropdown"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              <FontAwesomeIcon icon={faUserCircle} />
+            </button>
+            <ul className="dropdown-menu" aria-labelledby="profileDropdown">
+              <li className="dropdown-item-profile">
+                <FontAwesomeIcon className="profile-icon" icon={faUserCircle} />
+                <div className="dropdown-item-text">
+                  <span className="name">{user.displayName}</span>
+                  <span className="email">{user.email}</span>
+                </div>
               </li>
-            )}
-
-            <li className="nav-item">
-              <button
-                className="btn btn-success"
-                onClick={() => dispatch(signOutUser())}
-              >
-                {" "}
-                Logout
-              </button>
-            </li>
-          </>
-        ) : (
-          <>
-            <li className="nav-item mx-2">
-              <Link className="btn btn-primary" to="/login">
-                Login
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link className="btn btn-success" to="/register">
-                Register
-              </Link>
-            </li>
-          </>
-        )}
+              <li>
+                <button className="dropdown-item" onClick={handleSignOut}>
+                  Изход
+                </button>
+              </li>
+            </ul>
+          </li>
+        </>
       </ul>
     </nav>
   );

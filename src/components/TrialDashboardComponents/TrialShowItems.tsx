@@ -4,7 +4,7 @@ import { faFileText, faEllipsisH } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import { getCookie, setCookie } from "./cookieUtils";
 import ConfirmationModal from "../DashboardComponents/ShowItems/ConfirmationModal";
-
+import "../DashboardComponents/ShowItems/ShowItems.css";
 interface ItemData {
   id: string;
   name: string;

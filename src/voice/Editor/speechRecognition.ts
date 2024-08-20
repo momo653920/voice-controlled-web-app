@@ -1,15 +1,24 @@
 import debounce from "lodash.debounce";
-import handleVoiceCommand from "./voiceCommands";
-import punctuationMappings from "./punctuationMappings.json";
 import ReactQuill from "react-quill";
+import handleVoiceCommand from "./voiceCommands";
 
-const getPunctuation = (word: string) => {
-  return punctuationMappings[word.toLowerCase()] || word;
+const punctuationMappings: { [key: string]: string } = {
+  запетая: ",",
+  точка: ".",
+  въпросителен: "?",
+  удивителен: "!",
+  двуеточие: ":",
+  точка_и_запетая: ";",
+  тире: "-",
+  скоби: "()",
+  кавички: '"',
+  апостроф: "'",
 };
 
 let recognitionStarted = false;
 let lastRestartAttempt = 0;
 const RESTART_DELAY = 1000;
+const DEBOUNCE_DELAY = 500;
 
 const initSpeechRecognition = (
   handleSpeechRecognition: (transcript: string) => void
@@ -23,7 +32,7 @@ const initSpeechRecognition = (
   const recognition = new SpeechRecognition();
   recognition.continuous = true;
   recognition.interimResults = true;
-  recognition.lang = "en-US";
+  recognition.lang = "bg-BG";
 
   recognition.onresult = (event: SpeechRecognitionEvent) => {
     let interimTranscript = "";
@@ -37,10 +46,9 @@ const initSpeechRecognition = (
       }
     }
 
+    // Process only final results
     if (finalTranscript) {
       handleSpeechRecognition(finalTranscript.trim());
-    } else if (interimTranscript) {
-      handleSpeechRecognition(interimTranscript.trim());
     }
   };
 
@@ -83,7 +91,7 @@ const initSpeechRecognition = (
 };
 
 let lastProcessedTranscript = "";
-const DEBOUNCE_DELAY = 500;
+let processing = false;
 
 const sanitizeText = (text: string): string => {
   return text.replace(/<[^>]*>/g, "").trim();
@@ -96,70 +104,70 @@ const processTranscript = (
   setIsCommandMode: (mode: boolean) => void,
   editorRef: React.RefObject<ReactQuill>
 ) => {
+  if (processing) return;
+  processing = true;
+
   const trimmedTranscript = sanitizeText(transcript.trim());
 
-  if (trimmedTranscript === lastProcessedTranscript) return;
-  lastProcessedTranscript = trimmedTranscript;
+  if (trimmedTranscript === lastProcessedTranscript) {
+    processing = false;
+    return;
+  }
 
-  const punctuationMappings: { [key: string]: string } = {
-    comma: ",",
-    period: ".",
-    question: "?",
-    exclamation: "!",
-    colon: ":",
-    semicolon: ";",
-    dash: "-",
-    parenthesis: "()",
-    quote: '"',
-    apostrophe: "'",
-  };
+  lastProcessedTranscript = trimmedTranscript;
 
   const punctuationRegex = new RegExp(
     Object.keys(punctuationMappings).join("|"),
     "gi"
   );
 
-  const cleanedTranscript = trimmedTranscript.replace(
+  let cleanedTranscript = trimmedTranscript.replace(
     punctuationRegex,
     (matched) => punctuationMappings[matched.toLowerCase()]
+  );
+  cleanedTranscript = cleanedTranscript
+    .replace(/([,.!?;:])\s*/g, "$1 ")
+    .replace(/\s{2,}/g, " ");
+
+  cleanedTranscript = cleanedTranscript.replace(
+    /(^|\.\s+)([a-z])/g,
+    (match, p1, p2) => p1 + p2.toUpperCase()
   );
 
   const words = cleanedTranscript.split(" ");
   const lastWord = words[words.length - 1].toLowerCase();
 
-  if (lastWord === "jessica") {
+  if (lastWord === "джесика") {
     setIsCommandMode(!isCommandMode);
-    return;
-  }
-
-  if (lastWord === "text mode" && isCommandMode) {
-    setIsCommandMode(false);
+    processing = false;
     return;
   }
 
   if (isCommandMode) {
     handleVoiceCommand(trimmedTranscript, setData, editorRef);
+    processing = false;
     return;
   } else {
-    let updatedText = cleanedTranscript
-      .replace(/\s*([,.!?])/g, "$1")
-      .replace(/(?:^|\.\s+)([a-z])/g, (match) => match.toUpperCase());
-
     const editor = editorRef.current?.getEditor();
-    if (!editor) return;
+    if (!editor) {
+      processing = false;
+      return;
+    }
 
     const currentText = editor.getText().trim();
     const lastCharacter = currentText.charAt(currentText.length - 1);
 
-    if (lastCharacter && !/[.!?]$/.test(lastCharacter)) {
-      updatedText = ` ${updatedText}`;
+    if (currentText && !/[.!?]\s*$/.test(currentText)) {
+      cleanedTranscript = ` ${cleanedTranscript}`;
     }
 
     setData((prevData) => {
-      const newText = prevData.trim()
-        ? `${prevData}${updatedText}`
-        : updatedText;
-      editor.setText(sanitizeText(newText));
+      const newText = prevData.trim() + cleanedTranscript;
+      if (sanitizeText(newText).endsWith(sanitizeText(cleanedTranscript))) {
+        processing = false;
+        return sanitizeText(newText);
+      }
+      processing = false;
       return sanitizeText(newText);
     });
   }

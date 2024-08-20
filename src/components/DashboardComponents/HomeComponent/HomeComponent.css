@@ -1,0 +1,97 @@
+.home-container {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 20px !important; /* Space between folders and files */
+    width: 100% !important;
+    padding: 10px !important;
+    margin-left: 3rem;
+    margin-top: 3rem;
+}
+
+.item-row {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 20px !important; /* Adjust spacing between items */
+    justify-content: flex-start !important; /* Left-align the items */
+}
+
+.item {
+    position: relative !important;
+    cursor: pointer !important;
+    flex: 0 1 200px !important; /* Set width */
+    height: 250px !important; /* Set height */
+    padding: 10px !important;
+    padding: 10px !important;
+    text-align: center !important;
+    border: 1px solid #ffffff !important;
+    border-radius: 12px !important;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1) !important;
+    background-color: #ededed !important;
+    transition: background-color 0.3s ease !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: center !important;
+}
+
+.item-icon {
+    font-size: 6rem !important;
+    color: rgb(123, 178, 255);
+    margin-bottom: 10px !important; /* Space between icon and card bottom */
+}
+
+.item-dots {
+    position: absolute !important;
+    top: 10px !important;
+    right: 10px !important;
+    cursor: pointer !important;
+}
+
+.item:hover {
+    background-color: #f1f1f1 !important;
+}
+
+/* New CSS for the file/folder name */
+.item-name {
+    margin-top: 5px !important; /* Adjust spacing between card and name */
+    text-align: center !important;
+    width: 200px !important; /* Same width as the card */
+    display: inline-block !important;
+    color: #333 !important;
+    font-weight: bold !important;
+    white-space: nowrap !important; /* Prevent text wrapping */
+    overflow: hidden !important; /* Hide overflow */
+    text-overflow: ellipsis !important; /* Add ellipsis for overflow */
+    word-break: break-all !important; /* Ensure no word is too long */
+}
+
+/* Adjustments to dropdown menu */
+.dropdown-menu {
+    position: absolute !important;
+    top: 30px !important;
+    right: 10px !important;
+    background: white !important;
+    border: 1px solid #ccc !important;
+    display: none !important;
+    flex-direction: column !important;
+    z-index: 1000 !important;
+}
+
+.dropdown-menu.show {
+    display: flex !important;
+}
+
+.dropdown-item {
+    padding: 10px !important;
+    cursor: pointer !important;
+}
+
+.dropdown-item:hover {
+    background: #f0f0f0 !important;
+}
+
+.items-count {
+    font-size: 0.9em !important;
+    color: #888 !important;
+}
+

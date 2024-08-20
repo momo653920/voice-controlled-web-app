@@ -1,86 +1,47 @@
-.navbar {
-    background-color: #ffffff;
-    border: 1px solid #e3e3e3;
-    padding: 10px 0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  
-  .breadcrumb-item {
-    margin-right: 5px;
-    font-size: 14px;
-  }
-  
-  .breadcrumb-item:last-child {
-    font-weight: bold;
-  }
-  
-  .breadcrumb-item.active {
-    color: #000000;
-    font-weight: bold;
-  }
-  
-
-  .navbar-nav {
-    display: flex;
-    align-items: center;
-    list-style: none;
-  }
-  
-  .navbar-item {
-    margin: 0 5px;
-  }
-  
-  .btn-lg {
-    font-size: 16px;
-    padding: 10px 20px;
-  }
-  
-  .btn-outline-dark {
-    color: #343a40;
-    border-color: #343a40;
-  }
-  
-  .btn-outline-dark:hover {
-    background-color: #343a40;
-    color: #ffffff;
-  }
-
-  @media (max-width: 768px) {
-    .ms-5,
-    .me-5 {
-      display: none;
-    }
-  }
-  
-  @media (max-width: 576px) {
-    .navbar-nav {
-      flex-direction: column;
-    }
-  
-    .navbar-item {
-      margin: 5px 0;
-    }
-  }
-
-.breadcrumb-item {
-  margin-right: 5px;
-  color: #6c757d; 
-  cursor: pointer; 
+.navbar-buttons {
+  display: flex;
+  align-items: center;
+  margin-left: 0;
 }
 
-.breadcrumb-item:hover {
-  color: #495057; 
-  text-decoration: underline; 
+.navbar-nav {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding-left: 0;
+  margin-left: 2rem;
 }
 
-
-.breadcrumb-item.folder {
-  color: #6c757d; 
-  cursor: pointer; 
+.navbar-nav .navbar-item {
+  margin-left: 0.5rem;
 }
 
-.breadcrumb-item.folder:hover {
-  color: #495057; 
+.navbar-nav .navbar-item .btn {
+  display: flex;
+  flex-direction: column;
+  align-items: left; 
+  padding: 10px;
+  width: 140px;
+  height: 80px;
+  font-size: 1rem;
+  border: 2px solid #000000;
+}
+
+.btn-create-file {
+  background-color: #000 !important;
+  color: #fff !important;
+}
+
+.btn-create-file:hover {
+  background-color: #fff !important;
+  color: #000 !important;
+}
+
+.btn-create-file .icon {
+  font-size: 2rem;
+}
+
+.navbar-nav .navbar-item span {
+  margin-top: 5px;
+  text-align: center;
 }

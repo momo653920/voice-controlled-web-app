@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { signInUser } from "../../redux/actionCreators/authActionCreator";
 import { useNavigate } from "react-router-dom";
+import "./LoginForm.css"; // Ensure this CSS file is imported
 
 const LoginForm = () => {
   const [email, setEmail] = useState("");
@@ -16,7 +17,7 @@ const LoginForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!email || !password) {
-      setError("Please fill all the fields");
+      setError("Моля, попълнете всички полета");
       return;
     }
     dispatch(
@@ -31,7 +32,7 @@ const LoginForm = () => {
   }, [successMessage, navigate]);
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className="login-form">
       {error && (
         <div className="alert alert-danger" aria-live="assertive">
           {error}
@@ -42,8 +43,8 @@ const LoginForm = () => {
           {successMessage}
         </div>
       )}
-      <div className="form-group my-2">
-        <label htmlFor="email">Email:</label>
+      <div className="form-group">
+        <label htmlFor="email">Имейл:</label>
         <input
           type="email"
           id="email"
@@ -53,8 +54,8 @@ const LoginForm = () => {
           aria-describedby="emailHelp"
         />
       </div>
-      <div className="form-group my-2">
-        <label htmlFor="password">Password:</label>
+      <div className="form-group">
+        <label htmlFor="password">Парола:</label>
         <input
           type="password"
           id="password"
@@ -63,12 +64,8 @@ const LoginForm = () => {
           onChange={(e) => setPassword(e.target.value)}
         />
       </div>
-      <button
-        type="submit"
-        className="btn btn-primary my-2 form-control"
-        disabled={loading}
-      >
-        {loading ? "Logging in..." : "Login"}
+      <button type="submit" className="btn btn-primary" disabled={loading}>
+        {loading ? "Влизане..." : "Продължи"}
       </button>
     </form>
   );

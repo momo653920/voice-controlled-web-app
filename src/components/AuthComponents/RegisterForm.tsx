@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { signUpUser } from "../../redux/actionCreators/authActionCreator";
 import { useNavigate } from "react-router-dom";
+import "./RegisterForm.css"; // Ensure this is imported
 
 const RegisterForm = () => {
   const [email, setEmail] = useState("");
@@ -18,11 +19,11 @@ const RegisterForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!email || !name || !password || !confirmPassword) {
-      setError("Please fill all the fields");
+      setError("Моля, попълнете всички полета");
       return;
     }
     if (password !== confirmPassword) {
-      setError("Passwords do not match");
+      setError("Паролите не съвпадат");
       return;
     }
     dispatch(
@@ -37,7 +38,7 @@ const RegisterForm = () => {
   }, [successMessage, navigate]);
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className="register-form">
       {error && (
         <div className="alert alert-danger" aria-live="assertive">
           {error}
@@ -48,8 +49,8 @@ const RegisterForm = () => {
           {successMessage}
         </div>
       )}
-      <div className="form-group my-2">
-        <label htmlFor="email">Email:</label>
+      <div className="form-group my-3">
+        <label htmlFor="email">Имейл:</label>
         <input
           type="email"
           id="email"
@@ -59,8 +60,8 @@ const RegisterForm = () => {
           aria-describedby="emailHelp"
         />
       </div>
-      <div className="form-group my-2">
-        <label htmlFor="name">Name:</label>
+      <div className="form-group my-3">
+        <label htmlFor="name">Име:</label>
         <input
           type="text"
           id="name"
@@ -69,8 +70,8 @@ const RegisterForm = () => {
           onChange={(e) => setName(e.target.value)}
         />
       </div>
-      <div className="form-group my-2">
-        <label htmlFor="password">Password:</label>
+      <div className="form-group my-3">
+        <label htmlFor="password">Парола:</label>
         <input
           type="password"
           id="password"
@@ -79,8 +80,8 @@ const RegisterForm = () => {
           onChange={(e) => setPassword(e.target.value)}
         />
       </div>
-      <div className="form-group my-2">
-        <label htmlFor="confirmPassword">Confirm Password:</label>
+      <div className="form-group my-3">
+        <label htmlFor="confirmPassword">Потвърдете паролата:</label>
         <input
           type="password"
           id="confirmPassword"
@@ -89,12 +90,8 @@ const RegisterForm = () => {
           onChange={(e) => setConfirmPassword(e.target.value)}
         />
       </div>
-      <button
-        type="submit"
-        className="btn btn-primary my-2 form-control"
-        disabled={loading}
-      >
-        {loading ? "Registering..." : "Register"}
+      <button type="submit" className="btn btn-primary my-3" disabled={loading}>
+        {loading ? "Регистрирам..." : "Продължи"}
       </button>
     </form>
   );
