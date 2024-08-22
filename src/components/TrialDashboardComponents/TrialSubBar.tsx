@@ -12,7 +12,7 @@ const TrialSubBar: React.FC<TrialSubBarProps> = ({
 }) => {
   return (
     <nav className="navbar navbar-expand-lg mt-3 navbar-light bg-white py-2">
-      <div className="navbar-buttons">
+      <div className="">
         <ul className="navbar-nav">
           <li className="navbar-item">
             <button

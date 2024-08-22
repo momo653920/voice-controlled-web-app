@@ -1,30 +1,42 @@
 .navbar-buttons {
-  display: flex;
-  align-items: center;
-  margin-left: 0;
+  display: flex !important;
+  align-items: left !important;
+  margin-right: 1rem !important;
+  margin-left: 5rem;
+  margin-top: 1rem;
 }
 
 .navbar-nav {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  padding-left: 0;
-  margin-left: 2rem;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  padding-left: 0 !important;
+  margin-left: 4rem !important;
+  margin-right: 1rem !important;
 }
 
 .navbar-nav .navbar-item {
-  margin-left: 0.5rem;
+  margin-left: 0 !important;
 }
 
 .navbar-nav .navbar-item .btn {
-  display: flex;
-  flex-direction: column;
-  align-items: left; 
-  padding: 10px;
-  width: 140px;
-  height: 80px;
-  font-size: 1rem;
-  border: 2px solid #000000;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: left !important;
+  padding: 10px !important;
+  width: 140px !important;
+  height: 80px !important;
+  font-size: 1rem !important;
+  transition: background-color 0.3s ease, color 0.3s ease !important;
+}
+
+.navbar-nav .navbar-item .icon {
+  font-size: 2rem !important;
+}
+
+.navbar-nav .navbar-item span {
+  margin-top: 5px !important;
+  text-align: center !important;
 }
 
 .btn-create-file {
@@ -32,16 +44,31 @@
   color: #fff !important;
 }
 
-.btn-create-file:hover {
+.btn-upload {
+  border: 2px dashed #000 !important;
   background-color: #fff !important;
   color: #000 !important;
 }
 
-.btn-create-file .icon {
-  font-size: 2rem;
+.btn-create-folder {
+  border: 2px solid #000 !important;
+  background-color: #fff !important;
+  color: #000 !important;
 }
 
-.navbar-nav .navbar-item span {
-  margin-top: 5px;
-  text-align: center;
+.btn-create-folder:hover {
+  background-color: #fff !important;
+  color: #000 !important;
+}
+
+.folder-name {
+  font-size: 1.5rem !important;
+  margin-top: 1rem !important;
+  text-align: left !important;
+  padding-left: 4rem !important;
+}
+
+.go-back-button {
+  position: absolute !important;
+  right: 4rem !important;
 }

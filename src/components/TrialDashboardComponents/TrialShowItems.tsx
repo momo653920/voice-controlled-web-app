@@ -92,7 +92,7 @@ const TrialShowItems: React.FC = () => {
 
   return (
     <div className="item-container">
-      <h4 className="item-title">Trial Show Items</h4>
+      <h4 className="item-title">Файлове</h4>
       <div className="row gap-2 p-4 flex-wrap">
         {items.map((item) => (
           <div

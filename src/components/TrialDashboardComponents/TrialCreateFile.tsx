@@ -44,7 +44,7 @@ const TrialCreateFile: React.FC<{
         }}
       >
         <div className="d-flex justify-content-between align-items-center mb-3">
-          <h4 className="m-0">Create File</h4>
+          <h4 className="m-0">Създай файл</h4>
           <button
             className="btn"
             onClick={() => setIsCreateFileModalOpen(false)}

@@ -19,11 +19,11 @@ const TrialHomeComponent: React.FC = () => {
   }, []);
 
   return (
-    <div className="col-md-12 w-100">
+    <div className="home-container">
       {isLoading ? (
         <h1 className="display-1 my-5 text-center">Loading...</h1>
       ) : (
-        <TrialShowItems title="Files" type="files" items={userFiles} />
+        <TrialShowItems />
       )}
     </div>
   );
