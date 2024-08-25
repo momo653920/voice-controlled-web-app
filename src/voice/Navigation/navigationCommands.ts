@@ -101,9 +101,9 @@ export const navigationCommands = async (
   const isCommandMatch = (commandKey: string): boolean => {
     const phrases = Commands[commandKey];
     if (Array.isArray(phrases)) {
-      return phrases.some((phrase) => lowerCaseCommand.startsWith(phrase));
+      return phrases.some((phrase) => lowerCaseCommand.includes(phrase));
     } else {
-      return lowerCaseCommand.startsWith(phrases);
+      return lowerCaseCommand.includes(phrases);
     }
   };
 

@@ -1,10 +1,10 @@
 export const Commands = {
   OPEN_FILE: "отвори файл",
   OPEN_FOLDER: "отвори папка",
-  HOMEPAGE: "начална страница",
+  HOMEPAGE: ["начална страница", "начало"],
   GO_BACK: "назад",
-  LOGIN: "влез",
-  REGISTER: "регистрирай се",
+  LOGIN: ["влез", "вход"],
+  REGISTER: ["регистрирай се", "регистрация"],
   DASHBOARD: ["табло", "отидете на таблото"],
   ADMIN: "администратор",
   CREATE_FILE: "създай файл",

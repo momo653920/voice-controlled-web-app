@@ -1,7 +1,7 @@
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
-import "../DashboardComponents/SubBar/SubBar.css"; // Ensure you include the CSS file
+import "../DashboardComponents/SubBar/SubBar.css";
 
 interface TrialSubBarProps {
   setIsCreateFileModalOpen: (open: boolean) => void;
