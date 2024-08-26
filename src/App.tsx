@@ -89,9 +89,9 @@ const App: React.FC = () => {
 
       if (!recognitionRunning.current) {
         recognition.start();
+        recognition.continuous;
         recognitionRunning.current = true;
       }
-
       return () => {
         if (recognitionRunning.current) {
           recognition.stop();

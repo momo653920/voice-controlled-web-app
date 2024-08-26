@@ -2,6 +2,7 @@ export const Commands = {
   OPEN_FILE: "отвори файл",
   OPEN_FOLDER: "отвори папка",
   HOMEPAGE: ["начална страница", "начало"],
+  CLOSE: ["затвори", "назад"],
   GO_BACK: "назад",
   LOGIN: ["влез", "вход"],
   REGISTER: ["регистрирай се", "регистрация"],

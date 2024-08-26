@@ -16,18 +16,20 @@ import { RootState } from "../../redux/store";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
 
 interface Props {
+  isCreateFileModalOpen: boolean;
+  setIsCreateFileModalOpen: (open: boolean) => void;
   isCreateFolderModalOpen: boolean;
   setIsCreateFolderModalOpen: (open: boolean) => void;
   setIsTrial: (isTrial: boolean) => void;
 }
 
 const DashboardPage: React.FC<Props> = ({
+  isCreateFileModalOpen,
+  setIsCreateFileModalOpen,
   isCreateFolderModalOpen,
   setIsCreateFolderModalOpen,
   setIsTrial,
 }) => {
-  const [isCreateFileModalOpen, setIsCreateFileModalOpen] =
-    React.useState(false);
   const [isFileUploadModalOpen, setIsFileUploadModalOpen] =
     React.useState(false);
   const { pathname } = useLocation();

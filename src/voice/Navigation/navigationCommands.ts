@@ -162,6 +162,10 @@ export const navigationCommands = async (
     navigate("/dashboard");
   } else if (isCommandMatch("ADMIN")) {
     navigate("/admin");
+  } else if (isCommandMatch("CLOSE")) {
+    setIsTrialCreateFileModalOpen(false);
+    setIsCreateFileModalOpen(false);
+    setIsCreateFolderModalOpen(false);
   } else if (isCommandMatch("CREATE_FILE")) {
     if (isTrial) {
       setIsTrialCreateFileModalOpen(true);

@@ -12,7 +12,7 @@ import SpeechBubble from "../../SpeechBubbleComponent/speechBubble";
 
 const modules = {
   toolbar: [
-    [{ header: [1, 2, false] }],
+    [{ header: [1, 2] }],
     ["bold", "italic", "underline", "strike"],
     [{ list: "ordered" }, { list: "bullet" }],
     ["link", "image"],
@@ -92,6 +92,7 @@ const Editor: React.FC<{ data: string; setData: (data: string) => void }> = ({
           className="editor"
           modules={modules}
           formats={formats}
+          style={{ fontSize: "24px", lineHeight: "1.6" }} // Apply font size and line height inline
         />
       </div>
       <div className="mode-indicator">

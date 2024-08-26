@@ -55,18 +55,15 @@ const initSpeechRecognition = (
   recognition.onerror = (event) => {
     console.error("Speech recognition error:", event.error);
 
-    if (event.error === "aborted") {
-      restartRecognition();
-    } else {
-      recognition.stop();
-      recognitionStarted = false;
-      const now = Date.now();
-      if (now - lastRestartAttempt > RESTART_DELAY) {
-        setTimeout(() => {
-          restartRecognition();
-        }, RESTART_DELAY);
-        lastRestartAttempt = now;
-      }
+    recognition.stop();
+    recognitionStarted = false;
+
+    const now = Date.now();
+    if (now - lastRestartAttempt > RESTART_DELAY) {
+      setTimeout(() => {
+        restartRecognition();
+      }, RESTART_DELAY);
+      lastRestartAttempt = now;
     }
   };
 
@@ -91,7 +88,6 @@ const initSpeechRecognition = (
 };
 
 let lastProcessedTranscript = "";
-let processing = false;
 
 const sanitizeText = (text: string): string => {
   return text.replace(/<[^>]*>/g, "").trim();
@@ -104,18 +100,13 @@ const processTranscript = (
   setIsCommandMode: (mode: boolean) => void,
   editorRef: React.RefObject<ReactQuill>
 ) => {
-  if (processing) return;
-  processing = true;
-
   const trimmedTranscript = sanitizeText(transcript.trim());
 
-  if (trimmedTranscript === lastProcessedTranscript) {
-    processing = false;
-    return;
-  }
+  if (trimmedTranscript === lastProcessedTranscript) return;
 
   lastProcessedTranscript = trimmedTranscript;
 
+  // Replace verbal commands with punctuation marks
   const punctuationRegex = new RegExp(
     Object.keys(punctuationMappings).join("|"),
     "gi"
@@ -125,9 +116,12 @@ const processTranscript = (
     punctuationRegex,
     (matched) => punctuationMappings[matched.toLowerCase()]
   );
+
   cleanedTranscript = cleanedTranscript
-    .replace(/([,.!?;:])\s*/g, "$1 ")
-    .replace(/\s{2,}/g, " ");
+    .replace(/\s*([,.!?;:])\s*/g, "$1 ") // Ensure one space after punctuation
+    .replace(/\s{2,}/g, " ") // Replace multiple spaces with a single space
+    .replace(/([,.!?;:])(?=[^\s])/g, "$1 ") // Add space if missing after punctuation
+    .trim();
 
   cleanedTranscript = cleanedTranscript.replace(
     /(^|\.\s+)([a-z])/g,
@@ -139,45 +133,48 @@ const processTranscript = (
 
   if (lastWord === "джесика") {
     setIsCommandMode(!isCommandMode);
-    processing = false;
     return;
   }
 
   if (isCommandMode) {
     handleVoiceCommand(trimmedTranscript, setData, editorRef);
-    processing = false;
-    return;
   } else {
     const editor = editorRef.current?.getEditor();
-    if (!editor) {
-      processing = false;
-      return;
-    }
+    if (!editor) return;
 
-    const currentText = editor.getText().trim();
-    const lastCharacter = currentText.charAt(currentText.length - 1);
-
-    if (currentText && !/[.!?]\s*$/.test(currentText)) {
-      cleanedTranscript = ` ${cleanedTranscript}`;
-    }
+    cleanedTranscript = ` ${cleanedTranscript}`;
 
     setData((prevData) => {
       const newText = prevData.trim() + cleanedTranscript;
-      if (sanitizeText(newText).endsWith(sanitizeText(cleanedTranscript))) {
-        processing = false;
-        return sanitizeText(newText);
-      }
-      processing = false;
-      return sanitizeText(newText);
+      const sanitizedText = sanitizeText(newText);
+      editor.setText(sanitizedText);
+
+      // Move the cursor to the end
+      const length = editor.getLength(); // Get length of the current text
+      editor.setSelection(length, length); // Move the cursor to the end
+
+      return sanitizedText;
     });
   }
 };
 
-const debouncedProcessTranscript = debounce(processTranscript, DEBOUNCE_DELAY);
+const debouncedProcessTranscript = debounce(
+  (transcript, setData, isCommandMode, setIsCommandMode, editorRef) => {
+    processTranscript(
+      transcript,
+      setData,
+      isCommandMode,
+      setIsCommandMode,
+      editorRef
+    );
+  },
+  DEBOUNCE_DELAY
+);
 
 const startListening = (recognition: SpeechRecognition) => {
   try {
     recognition.start();
+    recognitionStarted = true;
   } catch (e) {
     console.error("Failed to start recognition:", e.message);
   }
@@ -186,6 +183,7 @@ const startListening = (recognition: SpeechRecognition) => {
 const stopListening = (recognition: SpeechRecognition) => {
   try {
     recognition.stop();
+    recognitionStarted = false;
   } catch (e) {
     console.error("Failed to stop recognition:", e.message);
   }
